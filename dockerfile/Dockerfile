@@ -25,11 +25,6 @@ RUN wget -q -O /tmp/miniconda.sh                                               \
     && rm /tmp/miniconda.sh                                                    \
     && echo "export PATH=$PATH" > /etc/profile.d/conda.sh
 
-#    && ${CONDA_PREFIX}/bin/conda clean -tipsy                                  \
-#    && ln -s ${CONDA_PREFIX}/etc/profile.d/conda.sh /etc/profile.d/conda.sh    \
-#    && echo "export PATH=$PATH" > /etc/profile.d/conda.sh\
-#    && echo "conda activate base" >> /etc/profile.d/conda.sh
-
 RUN conda install -y python=3.6                             \
     && conda config --env --add channels conda-forge        \
     && conda config --env --add channels usgs-astrogeology  \
@@ -48,3 +43,4 @@ RUN chmod +x /usr/bin/tini
 
 ENTRYPOINT [ "/usr/bin/tini", "--" ]
 CMD [ "/bin/bash", "-l" ]
+
