@@ -17,6 +17,21 @@ ISIS3 documentation/resources:
 * Mount a share point:
 ```
 % docker run -it --name isis3 \
-    -v $PWD/tmp:/mnt/host \
+    -v /tmp/isis3:/mnt/host \
+    chbrandt/isis3
+```
+
+* Bind ISIS3 ancillary data
+```
+% docker run -it --name isis3 \
+    -v $PWD/data/isis3data:/isis/data
+    -v $PWD/data/data:/mnt/data
+    chbrandt/isis3
+```
+
+* If you want to customize (e.g, for testing) ISIS3 variables:
+```
+% docker run -it --name isis3 \
+    -v $PWD/dockerfile/etc/isis.sh:/etc/profile.d/isis.sh
     chbrandt/isis3
 ```
