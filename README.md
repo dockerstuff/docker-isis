@@ -9,23 +9,11 @@ ISIS3 documentation/resources:
 
 ## Run it
 
-* The simplest run:
-```
-% docker run -it chbrandt/isis3
-```
-
-* Mount a share point:
-```
-% docker run -it --name isis3 \
-    -v /tmp/isis3:/mnt/host \
-    chbrandt/isis3
-```
-
 * Bind ISIS3 ancillary data
 ```
 % docker run -it --name isis3 \
-    -v $PWD/data/isis3data:/isis/data
-    -v $PWD/data/data:/mnt/data
+    -v /path/to/data/isis3data:/isis/data
+    -v /path/to/data/data:/mnt/data
     chbrandt/isis3
 ```
 
