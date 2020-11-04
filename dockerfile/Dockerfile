@@ -1,4 +1,4 @@
-FROM debian:latest
+FROM debian:buster
 
 MAINTAINER "Carlos Brandt <carloshenriquebrandt at gmail>"
 
@@ -28,9 +28,13 @@ RUN wget -q -O /tmp/miniconda.sh                                               \
 RUN conda install -y python=3.6                             \
     && conda config --env --add channels conda-forge        \
     && conda config --env --add channels usgs-astrogeology  \
-    && conda install -c usgs-astrogeology isis3
+    && conda install -c usgs-astrogeology isis3             \
+    && conda clean -a
 
+ARG ISISDATA=/isis/data
 ADD etc/isis.sh /etc/profile.d/isis.sh
+RUN sed -i "s,ISISDATA\=.*,ISISDATA\=${ISISDATA}," /etc/profile.d/isis.sh
+VOLUME "${ISISDATA}"
 
 #RUN git clone -b stable https://github.com/chbrandt/docker_entrypoint.git \
 #    && ln -sf docker_entrypoint/entrypoint.sh /.
