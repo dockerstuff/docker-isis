@@ -1,4 +1,5 @@
-FROM debian:buster
+#FROM debian:buster
+FROM chbrandt/gispy:gdal
 
 MAINTAINER "Carlos Brandt <carloshenriquebrandt at gmail>"
 
