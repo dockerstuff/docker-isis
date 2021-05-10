@@ -7,17 +7,25 @@ ISIS3 documentation/resources:
 - https://github.com/USGS-Astrogeology/ISIS3
 - https://astrodiscuss.usgs.gov/
 
-## Run it
+## How to run
 
-* Bind ISIS3 ancillary data
+If you are familiar with ISIS3 you know that ISIS need its kernels/ancillary data -- the famous `ISIS3DATA` -- to do virtually anything.
+By default (in this container) it is expected to be found under the container's `/isis/data` directory.
+
+### Basic example (recommended)
+> Provide your `ISIS3DATA` repository by mounting it at container's `/isis/data` path.
+
+* Example of running a `isis3` container with the ancillary data (at `/isis/data`):
 ```
 % docker run -it --name isis3 \
     -v /path/to/data/isis3data:/isis/data
-    -v /path/to/data/data:/mnt/data
     chbrandt/isis3
 ```
 
-* If you want to customize (e.g, for testing) ISIS3 variables:
+### Redefining ISIS3 environment variables
+> ISIS3 environment variables are defined in container's [/etc/profile.d/isis.sh](dockerfile/etc/isis.sh).
+
+* If you want to customize ISIS3 variables, overwrite the default bash-profile:
 ```
 % docker run -it --name isis3 \
     -v $PWD/dockerfile/etc/isis.sh:/etc/profile.d/isis.sh
