@@ -28,6 +28,10 @@ $ docker run -it --name isis3 \
 * If you want to customize ISIS3 variables, overwrite the default bash-profile:
 ```bash
 $ docker run -it --name isis3 \
-    -v $PWD/dockerfile/etc/isis.sh:/etc/profile.d/isis.sh
+    -v $PWD/dockerfile/etc/isis.sh:/etc/profile.d/isis.sh \
     chbrandt/isis3
 ```
+
+## Note
+  > you _can_ (and probably will/should) run the container providing data from your host system by mounting/binding any directory you want. 
+  > Just keep in mind that (by default) `/isis/data` is the directory where ISIS3 expects to find its ancillary data.
