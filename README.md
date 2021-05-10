@@ -16,9 +16,9 @@ By default (in this container) it is expected to be found under the container's 
 > Provide your `ISIS3DATA` repository by mounting it at container's `/isis/data` path.
 
 * Example of running a `isis3` container with the ancillary data (at `/isis/data`):
-```
-% docker run -it --name isis3 \
-    -v /path/to/data/isis3data:/isis/data
+```bash
+$ docker run -it --name isis3 \
+    -v /path/to/data/isis3data:/isis/data \
     chbrandt/isis3
 ```
 
@@ -26,8 +26,8 @@ By default (in this container) it is expected to be found under the container's 
 > ISIS3 environment variables are defined in container's [/etc/profile.d/isis.sh](dockerfile/etc/isis.sh).
 
 * If you want to customize ISIS3 variables, overwrite the default bash-profile:
-```
-% docker run -it --name isis3 \
+```bash
+$ docker run -it --name isis3 \
     -v $PWD/dockerfile/etc/isis.sh:/etc/profile.d/isis.sh
     chbrandt/isis3
 ```
