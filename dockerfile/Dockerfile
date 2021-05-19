@@ -1,4 +1,6 @@
-FROM chbrandt/gispy:jupyterhub
+# ARG BASE_IMAGE="osgeo/gdal"
+ARG BASE_IMAGE="chbrandt/gispy:jupyterhub"
+FROM $BASE_IMAGE
 
 MAINTAINER "Carlos Brandt <carloshenriquebrandt at gmail>"
 
@@ -17,7 +19,7 @@ RUN DEBIAN_FRONTEND=noninteractive        \
     && rm -rf /var/lib/apt/lists/*
 
 ENV CONDA_PREFIX="/opt/conda"
-ENV PATH="${CONDA_PREFIX}/bin:$PATH"
+ENV PATH="$PATH:${CONDA_PREFIX}/bin"
 
 RUN wget -q -O /tmp/miniconda.sh                                               \
          https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh \
@@ -35,16 +37,3 @@ ARG ISISDATA=/isis/data
 ADD etc/isis.sh /etc/profile.d/isis.sh
 RUN sed -i "s,ISISDATA\=.*,ISISDATA\=${ISISDATA}," /etc/profile.d/isis.sh
 VOLUME "${ISISDATA}"
-
-#RUN git clone -b stable https://github.com/chbrandt/docker_entrypoint.git \
-#    && ln -sf docker_entrypoint/entrypoint.sh /.
-#
-#ENTRYPOINT ["/entrypoint.sh"]
-
-# ENV TINI_VERSION=v0.19.0
-# ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /usr/bin/tini
-# RUN chmod +x /usr/bin/tini
-#
-# ENTRYPOINT [ "/usr/bin/tini", "--" ]
-# CMD [ "/bin/bash", "-l" ]
-#
