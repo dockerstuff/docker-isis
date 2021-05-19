@@ -37,3 +37,6 @@ ARG ISISDATA=/isis/data
 ADD etc/isis.sh /etc/profile.d/isis.sh
 RUN sed -i "s,ISISDATA\=.*,ISISDATA\=${ISISDATA}," /etc/profile.d/isis.sh
 VOLUME "${ISISDATA}"
+
+RUN update-alternatives --install /usr/bin/pip pip /usr/bin/pip3 1
+
