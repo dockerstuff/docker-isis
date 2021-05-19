@@ -1,5 +1,4 @@
-#FROM debian:buster
-FROM chbrandt/gispy:gdal
+FROM chbrandt/gispy:jupyterhub
 
 MAINTAINER "Carlos Brandt <carloshenriquebrandt at gmail>"
 
@@ -42,10 +41,10 @@ VOLUME "${ISISDATA}"
 #
 #ENTRYPOINT ["/entrypoint.sh"]
 
-ENV TINI_VERSION=v0.19.0
-ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /usr/bin/tini
-RUN chmod +x /usr/bin/tini
-
-ENTRYPOINT [ "/usr/bin/tini", "--" ]
-CMD [ "/bin/bash", "-l" ]
-
+# ENV TINI_VERSION=v0.19.0
+# ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /usr/bin/tini
+# RUN chmod +x /usr/bin/tini
+#
+# ENTRYPOINT [ "/usr/bin/tini", "--" ]
+# CMD [ "/bin/bash", "-l" ]
+#

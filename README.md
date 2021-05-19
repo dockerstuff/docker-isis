@@ -23,3 +23,12 @@ ISIS3 documentation/resources:
     -v $PWD/dockerfile/etc/isis.sh:/etc/profile.d/isis.sh
     chbrandt/isis3
 ```
+
+* If you're running the `gispy` image, it comes with Jupyterhub:
+```bash
+$ docker run -it --rm --name jupyterhub \
+    -p 8000:8000 \
+    -v "$PWD":/mnt/data \
+    -v "/path/to/data/isis3data":/isis/data \
+    chbrandt/isis3:gispy
+```
