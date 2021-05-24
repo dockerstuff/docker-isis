@@ -30,13 +30,10 @@ RUN wget -q -O /tmp/miniconda.sh                                               \
 RUN conda install -y python=3.6                             \
     && conda config --env --add channels conda-forge        \
     && conda config --env --add channels usgs-astrogeology  \
-    && conda install -c usgs-astrogeology isis3             \
+    && conda install -c usgs-astrogeology isis=3       \
     && conda clean -a
 
 ARG ISISDATA=/isis/data
 ADD etc/isis.sh /etc/profile.d/isis.sh
 RUN sed -i "s,ISISDATA\=.*,ISISDATA\=${ISISDATA}," /etc/profile.d/isis.sh
 VOLUME "${ISISDATA}"
-
-RUN update-alternatives --install /usr/bin/pip pip /usr/bin/pip3 1
-
