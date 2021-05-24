@@ -96,3 +96,13 @@ $ docker run -it --name isis3 \
 ```
 
 * If you're running the `jupyterhub` image, it comes with Jupyterhub:
+
+
+## Build examples
+
+* Use `chbrandt/gispy` with gdal `3.3.0` as base for ISIS:
+    
+    ```
+    $ docker build -t chbrandt/isis3:gispy --build-arg BASE_IMAGE="chbrandt/gispy:gdal-3.3.0" dockerfile/.
+    ```
+    
