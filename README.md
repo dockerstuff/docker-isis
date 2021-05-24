@@ -43,6 +43,11 @@ $ docker run -it --name isis3 \
     chbrandt/isis3
 ```
 
-## Note
-  > you _can_ (and probably will/should) run the container providing data from your host system by mounting/binding any directory you want. 
-  > Just keep in mind that (by default) `/isis/data` is the directory where ISIS3 expects to find its ancillary data.
+* If you're running the `jupyterhub` image, it comes with Jupyterhub:
+```bash
+$ docker run -it --rm --name jupyterhub \
+    -p 8000:8000 \
+    -v "$PWD":/mnt/data \
+    -v "/path/to/data/isis3data":/isis/data \
+    chbrandt/isis3:jupyterhub
+```
