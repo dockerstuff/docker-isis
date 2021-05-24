@@ -1,5 +1,5 @@
 # ARG BASE_IMAGE="osgeo/gdal"
-ARG BASE_IMAGE="chbrandt/gispy:jupyterhub"
+ARG BASE_IMAGE="chbrandt/gispy:gdal-3.3.0"
 FROM $BASE_IMAGE
 
 MAINTAINER "Carlos Brandt <carloshenriquebrandt at gmail>"
