@@ -39,7 +39,7 @@ ISISTESTDATA=/isis/data_test
 ## Run
 
 If you are familiar with ISIS3 you know that ISIS needs its kernels/ancillary data -- the famous `ISISDATA` -- to do virtually anything.
-By default, in `isis3` containers `ISIS3DATA` is expected to be found at `/isis/data` directory.
+By default, in `isis3` containers expect to find `ISIS3DATA` mounted at `/isis/data` directory.
 
 > Since "ISISDATA" is not included in the container the user must _mount_ a local copy of "ISISDATA"
 > as container's `/isis/data`. The examples below show how to do it.
@@ -69,7 +69,7 @@ $ docker run -it --rm --name isis3_gdal \
     chbrandt/isis3:gdal
 ```
 
-### ISIS3 + Jupyter-Hub command-line
+### ISIS3 + Jupyter-Hub 
 
 If you would like a graphical interface to use ISIS, GDAL and many Python GIS libraries you should use
 the `jupyterhub` tag.
@@ -100,9 +100,9 @@ $ docker run -it --name isis3 \
 
 ## Build examples
 
-* Use `chbrandt/gispy` with gdal `3.3.0` as base for ISIS:
+* Use `chbrandt/gispy:gdal` (currently `3.3.0`)  as base for ISIS:
     
     ```
-    $ docker build -t chbrandt/isis3:gispy --build-arg BASE_IMAGE="chbrandt/gispy:gdal-3.3.0" dockerfile/.
+    $ docker build -t chbrandt/isis3:gispy --build-arg BASE_IMAGE="chbrandt/gispy:gdal" dockerfile/.
     ```
     

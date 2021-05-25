@@ -1,4 +1,4 @@
-ARG BASE_IMAGE=osgeo/gdal:ubuntu-full-3.3.0
+ARG BASE_IMAGE=osgeo/gdal:ubuntu-small-3.3.0
 # ARG BASE_IMAGE="chbrandt/gispy:gdal-3.3.0"
 FROM $BASE_IMAGE
 
@@ -30,7 +30,7 @@ RUN wget -q -O /tmp/miniconda.sh                                               \
 RUN conda install -y python=3.6                             \
     && conda config --env --add channels conda-forge        \
     && conda config --env --add channels usgs-astrogeology  \
-    && conda install -c usgs-astrogeology isis=3       \
+    && conda install -c usgs-astrogeology isis3       \
     && conda clean -a
 
 ARG ISISDATA=/isis/data
