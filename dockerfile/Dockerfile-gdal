@@ -6,18 +6,6 @@ MAINTAINER "Carlos Brandt <carloshenriquebrandt at gmail>"
 
 ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
 
-RUN DEBIAN_FRONTEND=noninteractive        \
-    && apt-get update --fix-missing       \
-    && apt-get install -y wget            \
-                          bzip2           \
-                          ca-certificates \
-                          curl            \
-                          git             \
-                          vim             \
-    && apt-get install -y rsync           \
-                          libgl1-mesa-glx \
-                          python3-pip     \
-    && rm -rf /var/lib/apt/lists/*
 
 ENV CONDA_PREFIX="/opt/conda"
 ENV PATH="$PATH:${CONDA_PREFIX}/bin"
@@ -38,6 +26,19 @@ ARG ISISDATA=/isis/data
 ADD etc/isis.sh /etc/profile.d/isis.sh
 RUN sed -i "s,ISISDATA\=.*,ISISDATA\=${ISISDATA}," /etc/profile.d/isis.sh
 VOLUME "${ISISDATA}"
+
+RUN DEBIAN_FRONTEND=noninteractive        \
+    && apt-get update --fix-missing       \
+    && apt-get install -y wget            \
+                          bzip2           \
+                          ca-certificates \
+                          curl            \
+                          vim             \
+                          rsync           \
+                          libgl1-mesa-glx \
+                          python3-pip     \
+    && rm -rf /var/lib/apt/lists/*
+
 
 ENTRYPOINT ["bash"]
 
