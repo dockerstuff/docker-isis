@@ -16,6 +16,7 @@ RUN DEBIAN_FRONTEND=noninteractive        \
                           vim             \
     && apt-get install -y rsync           \
                           libgl1-mesa-glx \
+                          python3-pip     \
     && rm -rf /var/lib/apt/lists/*
 
 ENV CONDA_PREFIX="/opt/conda"
@@ -38,4 +39,6 @@ ADD etc/isis.sh /etc/profile.d/isis.sh
 RUN sed -i "s,ISISDATA\=.*,ISISDATA\=${ISISDATA}," /etc/profile.d/isis.sh
 VOLUME "${ISISDATA}"
 
-RUN update-alternatives --install /usr/bin/pip pip /usr/bin/pip3 1
+ENTRYPOINT ["bash"]
+
+CMD ["-l"]
