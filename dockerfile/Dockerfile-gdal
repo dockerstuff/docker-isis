@@ -1,11 +1,23 @@
 ARG BASE_IMAGE=osgeo/gdal:ubuntu-small-3.3.0
-# ARG BASE_IMAGE="chbrandt/gispy:gdal-3.3.0"
 FROM $BASE_IMAGE
 
 MAINTAINER "Carlos Brandt <carloshenriquebrandt at gmail>"
 
 ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
 
+RUN DEBIAN_FRONTEND=noninteractive        \
+    && apt-get update --fix-missing       \
+    && apt-get install -y wget            \
+                          bzip2           \
+                          ca-certificates \
+                          curl            \
+                          git             \
+                          vim             \
+                          rsync           \
+                          libgl1-mesa-glx \
+                          python3-pip	  \
+                          libgl1		  \
+    && rm -rf /var/lib/apt/lists/*
 
 ENV CONDA_PREFIX="/opt/conda"
 ENV PATH="$PATH:${CONDA_PREFIX}/bin"
@@ -16,29 +28,19 @@ RUN wget -q -O /tmp/miniconda.sh                                               \
     && rm /tmp/miniconda.sh                                                    \
     && echo "export PATH=$PATH" > /etc/profile.d/conda.sh
 
-RUN conda install -y python=3.6                             \
-    && conda config --env --add channels conda-forge        \
-    && conda config --env --add channels usgs-astrogeology  \
-    && conda install -c usgs-astrogeology isis3       \
-    && conda clean -a
+RUN conda update conda 								&& \
+	conda install -y python=3.6 					&& \
+    conda config --add channels conda-forge 		&& \
+    conda config --add channels usgs-astrogeology	&& \
+    conda install -c usgs-astrogeology isis3        && \
+    conda clean -a
 
 ARG ISISDATA=/isis/data
 ADD etc/isis.sh /etc/profile.d/isis.sh
 RUN sed -i "s,ISISDATA\=.*,ISISDATA\=${ISISDATA}," /etc/profile.d/isis.sh
 VOLUME "${ISISDATA}"
 
-RUN DEBIAN_FRONTEND=noninteractive        \
-    && apt-get update --fix-missing       \
-    && apt-get install -y wget            \
-                          bzip2           \
-                          ca-certificates \
-                          curl            \
-                          vim             \
-                          rsync           \
-                          libgl1-mesa-glx \
-                          python3-pip     \
-    && rm -rf /var/lib/apt/lists/*
-
+RUN apt-get update && apt-get install 
 
 ENTRYPOINT ["bash"]
 
