@@ -1,0 +1,27 @@
+ARG BASE_IMAGE=isis:latest
+FROM $BASE_IMAGE
+
+MAINTAINER "Carlos H Brandt <carloshenriquebrandt.gmail>"
+
+ARG JUPYTERHUB_VERSION=1.4.1
+
+RUN pip install --upgrade pip
+RUN pip install --no-cache \
+      jupyterhub==$JUPYTERHUB_VERSION \
+      jupyterlab notebook
+
+ARG USER=user
+ARG UID=1000
+ARG GID=100
+# ARG PASSWORD=123456
+
+ENV HOME="/home/$USER"
+
+RUN useradd -m -d $HOME -u $UID -g $GID -s /bin/bash $USER
+    # && echo "$USER:$PASSWORD" | chpasswd
+
+USER $USER
+WORKDIR $HOME
+
+# CMD ["jupyter", "lab", "--no-browser", "--port=8000", "--ip=0.0.0.0"]
+CMD ["jupyterhub-singleuser"]
