@@ -1,29 +1,28 @@
-ARG BASE_IMAGE=isis:latest
+ARG BASE_IMAGE=jupyter/base-notebook
 FROM $BASE_IMAGE
 
-MAINTAINER "Carlos H Brandt <carloshenriquebrandt.gmail>"
+MAINTAINER "Carlos Brandt <carloshenriquebrandt at gmail>"
 
-ARG JUPYTERHUB_VERSION=1.4.1
+ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
 
-RUN pip install --upgrade pip
-RUN pip install --no-cache \
-      jupyterhub==$JUPYTERHUB_VERSION \
-      jupyterlab notebook
+RUN conda create -n isis -c conda-forge -y python=3.6     && \
+    source activate isis                                   && \
+    conda config --add channels conda-forge               && \
+    conda config --prepend channels usgs-astrogeology     && \
+    conda config --append channels default                && \
+    conda install -c usgs-astrogeology -y isis            && \
+    conda clean -a
 
-ARG USER=user
-ARG UID=1000
-ARG GID=100
-# ARG PASSWORD=123456
+#ARG ISISDATA=/isis/data
+#ARG ISISTESTDATA=/isis/testdata
+#
+#RUN source activate isis && \
+#    python /opt/conda/envs/isis/scripts/isisVarInit.py \
+#      --data-dir=$ISISDATA  \
+#      --test-dir=$ISISTESTDATA
 
-ENV HOME="/home/$USER"
+RUN source activate isis && \
+    python /opt/conda/envs/isis/scripts/isisVarInit.py && \
+    echo "source activate isis" >> $HOME/.bashrc
 
-RUN useradd -m -d $HOME -u $UID -g $GID -s /bin/bash $USER
-    # && echo "$USER:$PASSWORD" | chpasswd
-
-USER $USER
-WORKDIR $HOME
-
-EXPOSE 8888
-ENTRYPOINT ["jupyter"]
-CMD ["lab", "--no-browser", "--port=8888", "--ip=0.0.0.0"]
-#CMD ["jupyterhub-singleuser"]
+#ENV PATH="$PATH:/opt/conda/envs/isis/bin"
