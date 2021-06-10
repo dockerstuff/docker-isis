@@ -23,5 +23,7 @@ RUN useradd -m -d $HOME -u $UID -g $GID -s /bin/bash $USER
 USER $USER
 WORKDIR $HOME
 
-# CMD ["jupyter", "lab", "--no-browser", "--port=8000", "--ip=0.0.0.0"]
-CMD ["jupyterhub-singleuser"]
+EXPOSE 8888
+ENTRYPOINT ["jupyter"]
+CMD ["lab", "--no-browser", "--port=8888", "--ip=0.0.0.0"]
+#CMD ["jupyterhub-singleuser"]
