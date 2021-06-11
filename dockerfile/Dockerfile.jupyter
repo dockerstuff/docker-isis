@@ -16,6 +16,7 @@ RUN conda create -n isis -c conda-forge -y python=3.6     && \
 #ARG ISISDATA=/isis/data
 #ARG ISISTESTDATA=/isis/testdata
 #
+# sudo apt install libgl1-mesa-glx
 #RUN source activate isis && \
 #    python /opt/conda/envs/isis/scripts/isisVarInit.py \
 #      --data-dir=$ISISDATA  \
@@ -26,3 +27,12 @@ RUN source activate isis && \
     echo "source activate isis" >> $HOME/.bashrc
 
 #ENV PATH="$PATH:/opt/conda/envs/isis/bin"
+
+USER root
+RUN apt-get update && \
+    apt-get install -y libgl1-mesa-glx && \
+    # apt-get install -y --no-install-recommends s3cmd && \
+    rm -rf /var/lib/apt/lists/* && \
+    apt-get autoremove
+USER $NB_UID
+WORKDIR $HOME
