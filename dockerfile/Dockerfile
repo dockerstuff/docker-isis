@@ -22,7 +22,7 @@ RUN DEBIAN_FRONTEND=noninteractive        \
 ENV CONDA_PREFIX="/opt/conda"
 ENV PATH="$PATH:${CONDA_PREFIX}/bin"
 
-ARG ISIS_VERSION="4"
+ARG ISIS_VERSION="3"
 
 RUN wget -q -O /tmp/miniconda.sh                                               \
          https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh \
@@ -42,5 +42,5 @@ ADD etc/isis.sh /etc/profile.d/isis.sh
 RUN sed -i "s,ISISDATA\=.*,ISISDATA\=${ISISDATA}," /etc/profile.d/isis.sh
 VOLUME "${ISISDATA}"
 
-ENTRYPOINT ["bash"]
-CMD ["-l"]
+#ENTRYPOINT ["bash"]
+#CMD ["-l"]
