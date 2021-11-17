@@ -1,4 +1,5 @@
 ARG BASE_IMAGE=osgeo/gdal:ubuntu-small-3.3.0
+
 FROM $BASE_IMAGE
 
 MAINTAINER "Carlos Brandt <carloshenriquebrandt at gmail>"
@@ -13,6 +14,8 @@ RUN DEBIAN_FRONTEND=noninteractive        \
           curl            \
           git             \
           libgl1-mesa-glx \
+          libjpeg9        \
+          libjpeg9-dev    \
           python3-pip     \
           rsync           \
           wget            \
