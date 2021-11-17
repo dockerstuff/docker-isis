@@ -6,6 +6,15 @@ MAINTAINER "Carlos Brandt <carloshenriquebrandt at gmail>"
 
 ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
 
+USER root
+RUN apt-get update && \
+    # apt-get install -y --no-install-recommends s3cmd && \
+    apt-get install -y libgl1-mesa-glx && \
+    apt-get install -y libjpeg9 libjpeg9-dev && \
+    rm -rf /var/lib/apt/lists/* && \
+    apt-get autoremove
+USER $NB_UID
+
 RUN conda create -n isis -c conda-forge -y python=3.6     && \
     source activate isis                                  && \
     conda config --add channels conda-forge               && \
@@ -14,27 +23,17 @@ RUN conda create -n isis -c conda-forge -y python=3.6     && \
     mamba install -c usgs-astrogeology -y isis            && \
     conda clean -a
 
-#ARG ISISDATA=/isis/data
-#ARG ISISTESTDATA=/isis/testdata
-#
-# sudo apt install libgl1-mesa-glx
-#RUN source activate isis && \
-#    python /opt/conda/envs/isis/scripts/isisVarInit.py \
-#      --data-dir=$ISISDATA  \
-#      --test-dir=$ISISTESTDATA
+ARG ISISDATA=/isis/data
+ARG ISISTESTDATA=/isis/testdata
 
 RUN source activate isis && \
-    python /opt/conda/envs/isis/scripts/isisVarInit.py && \
+    python /opt/conda/envs/isis/scripts/isisVarInit.py \
+      --data-dir=$ISISDATA  \
+      --test-dir=$ISISTESTDATA && \
     echo "source activate isis" >> $HOME/.bashrc
 
-#ENV PATH="$PATH:/opt/conda/envs/isis/bin"
+VOLUME "${ISISDATA}"
 
-#USER root
-#RUN apt-get update && \
-#    apt-get install -y libgl1-mesa-glx && \
-#    # apt-get install -y --no-install-recommends s3cmd && \
-#    rm -rf /var/lib/apt/lists/* && \
-#    apt-get autoremove
-#USER $NB_UID
+#ENV PATH="$PATH:/opt/conda/envs/isis/bin"
 
 WORKDIR $HOME
