@@ -36,7 +36,8 @@ Which allows us to rebuild one of them based on the other.
 It seems better to me to rebuild the Jupyter container from an OSGEO image,
 and then put ISIS on top.
 
-### Base container
+
+### Jupyter-GDAL container
 Basically, what we want to do is in the following branch of [jupyter/docker-stack](
 https://github.com/dockerstuff/docker-stacks/blob/master/base-notebook/build_gdal.sh
 ) build script:
@@ -46,5 +47,13 @@ $ cd docker-stacks/base-notebook
 $ docker build -t jupyter:gdal --build-arg ROOT_CONTAINER='osgeo/gdal:ubuntu-small-3.4.0' .
 ```
 
+
 ### Jupyter-ISIS container
-Then, we build ISIS container using `Dockerfile.jupyter`'s base image `jupyter_gdal`.
+Then, we build ISIS container using the just built `jupyter_gdal` as
+`Dockerfile.jupyter` base image:
+
+```bash
+$ cd dockerfile
+$ docker build -t jupyter:isis3 --build-arg BASE_IMAGE'jupyter:gdal' \
+          -f Dockerfile.jupyter .
+```

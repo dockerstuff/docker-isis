@@ -23,8 +23,18 @@ RUN conda create -n isis -c conda-forge -y python=3.6     && \
     mamba install -c usgs-astrogeology -y isis            && \
     conda clean -a
 
+RUN source activate isis  && \
+    pip install ipykernel &&\
+    python -m ipykernel install --user --name 'ISIS'
+
+# ENV ISISROOT=/opt/conda
 ARG ISISDATA=/isis/data
 ARG ISISTESTDATA=/isis/testdata
+
+USER root
+RUN mkdir -p $ISISDATA && \
+    mkdir -p $ISISTESTDATA
+USER $NB_UID
 
 RUN source activate isis && \
     python /opt/conda/envs/isis/scripts/isisVarInit.py \

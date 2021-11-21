@@ -1,0 +1,14 @@
+version: '3'
+
+services:
+
+  jupyter:
+    container_name: isis3-jupyter
+    image: jupyter:isis3
+    build:
+      context: ./dockerfiles
+      dockerfile: Dockerfile.jupyter
+      args:
+        BASE_IMAGE: "jupyter:gdal"
+    ports:
+      - 8888:8888
