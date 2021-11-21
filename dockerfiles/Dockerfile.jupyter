@@ -42,8 +42,8 @@ RUN source activate isis && \
       --test-dir=$ISISTESTDATA && \
     echo "source activate isis" >> $HOME/.bashrc
 
-VOLUME "${ISISDATA}"
+# VOLUME "${ISISDATA}"
 
 #ENV PATH="$PATH:/opt/conda/envs/isis/bin"
 
-WORKDIR $HOME
+# WORKDIR $HOME

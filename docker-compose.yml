@@ -12,3 +12,6 @@ services:
         BASE_IMAGE: "jupyter:gdal"
     ports:
       - 8888:8888
+    volumes:
+      - "${DATA_PATH:-./tmp/data}:/mnt/data"
+      - "${ISIS_DATA:-./tmp/isisdata}:/isis/data" 
