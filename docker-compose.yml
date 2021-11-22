@@ -4,7 +4,7 @@ services:
 
   jupyter:
     container_name: isis3-jupyter
-    image: jupyter:isis3
+    image: jupyter:isis
     build:
       context: ./dockerfiles
       dockerfile: Dockerfile.jupyter
@@ -14,4 +14,4 @@ services:
       - 8888:8888
     volumes:
       - "${DATA_PATH:-./tmp/data}:/mnt/data"
-      - "${ISIS_DATA:-./tmp/isisdata}:/isis/data" 
+      - "${ISIS_DATA:-./tmp/isisdata}:/isis/data"

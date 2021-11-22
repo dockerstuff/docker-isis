@@ -54,6 +54,6 @@ Then, we build ISIS container using the just built `jupyter_gdal` as
 
 ```bash
 $ cd dockerfile
-$ docker build -t jupyter:isis3 --build-arg BASE_IMAGE'jupyter:gdal' \
+$ docker build -t jupyter:isis --build-arg BASE_IMAGE'jupyter:gdal' \
           -f Dockerfile.jupyter .
 ```
