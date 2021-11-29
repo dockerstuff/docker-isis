@@ -1,0 +1,6 @@
+#!/bin/bash
+ISISROOT=/opt/conda
+ISISDATA=/isis/data
+ISIS3DATA="${ISISDATA}"
+ISISTESTDATA=/isis/data_test
+export ISISROOT ISISDATA ISIS3DATA ISISTESTDATA
