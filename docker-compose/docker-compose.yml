@@ -1,0 +1,17 @@
+version: '3'
+
+services:
+
+  jupyter:
+    container_name: isis3_5.0.2:jupyter
+    image: isis3_5.0.2:jupyter
+    build:
+      context: ./dockerfiles
+      dockerfile: jupyter-isis-asp.dockerfile
+      args:
+        BASE_IMAGE: "jupyter:gdal_$GDAL_VERSION"
+    ports:
+      - 8888:8888
+    volumes:
+      - "${DATA_PATH:-./tmp/data}:/mnt/data"
+      - "${ISIS_DATA:-./tmp/isisdata}:/isis/data"

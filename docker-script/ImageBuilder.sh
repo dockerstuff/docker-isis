@@ -45,21 +45,28 @@ done
 if (($ISIS_VERSION >=5));
 then
     ASP_VERSION='3.0.0'
-    ISIS_VERSION='5.0.1'
+    ISIS_VERSION='5.0.2'
+    GDAL_VERSION='3.4.0'
+    DOCKERFILE=isis5-asp.dockerfile
     echo "ISIS version $ISIS_VERSION will be installed"
     echo "NASA_Ames Stereo Pipeline 3.0.0 will be installed"
+
 
 elif (($ISIS_VERSION >=4)) && (($ISIS_VERSION <5))
 then
     ASP_VERSION='2.7.0'
     ISIS_VERSION='4.1.0'
+    GDAL_VERSION='3.4.0'
+    DOCKERFILE=isis4-asp.dockerfile
     echo "ISIS version $ISIS_VERSION will be installed"
     echo "NASA_Ames Stereo Pipeline 3.0.0 will be installed"
 
 elif (($ISIS_VERSION ==3))
 then
       ASP_VERSION='2.6.2'
-      ISIS_VERSION='3.6.0'
+      ISIS_VERSION='3'
+      GDAL_VERSION='3.4.0'
+      DOCKERFILE=isis3-asp.dockerfile
       echo "ISIS version $ISIS_VERSION will be installed"
       echo "NASA_Ames Stereo Pipeline 3.0.0 will be installed"
 
@@ -68,15 +75,15 @@ else
 fi
 echo "Jupyter install: $jupyter"
 read -p "Continue? " -n 1 -r
-echo
+
 if [[ $REPLY =~ ^[Yy]$ ]]
 then
-    BASE_IMAGE="osgeo/gdal:ubuntu-small-3.3.0"
+    BASE_IMAGE="osgeo/gdal:ubuntu-small-$GDAL_VERSION"
 
 if [[ $jupyter =~ ^[Yy1]$ ]]
     then
       echo "Creating jupyter:gdal image"
-      JUPYTER_IMAGE="jupyter:gdal"
+      JUPYTER_IMAGE="jupyter:gdal_$GDAL_VERSION"
       docker build -t "$JUPYTER_IMAGE"                 \
               --build-arg ROOT_CONTAINER="$BASE_IMAGE" \
               'https://github.com/jupyter/docker-stacks.git#master:base-notebook'
@@ -84,11 +91,11 @@ if [[ $jupyter =~ ^[Yy1]$ ]]
 
       ISIS_IMAGE="isis_$ISIS_VERSION:jupyter"
       BASE_IMAGE=$JUPYTER_IMAGE
-      DOCKERFILE=jupyter-isis-asp.dockerfile
+
 
 else
-  ISIS_IMAGE="isis_$ISIS_VERSION:gdal"
-  DOCKERFILE=isis-asp.dockerfile
+    ISIS_IMAGE="isis_$ISIS_VERSION:gdal"
+
 fi
 
     echo "Creating $ISIS_IMAGE image"
