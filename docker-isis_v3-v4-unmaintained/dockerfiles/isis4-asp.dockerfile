@@ -61,5 +61,5 @@ RUN conda create -n isis -c conda-forge -y python=3.6.10 && \
     --test-dir=$ISISTESTDATA && \
     source activate isis
 
-
+ENV JUPYTER_ENABLE_LAB=yes
 RUN echo "source activate isis" >> $HOME/.bashrc

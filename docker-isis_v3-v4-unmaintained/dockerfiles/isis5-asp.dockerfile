@@ -44,8 +44,10 @@ RUN set -x && \
     /bin/bash "${miniforge_installer}" -f -b -p "${CONDA_DIR}" && \
     rm "${miniforge_installer}" && \
     # Using conda to update all packages: https://github.com/mamba-org/mamba/issues/1092
-    echo 'eval "$(command conda shell.bash hook 2> /dev/null)"' >> /etc/skel/.bashrc && \
-    conda create -n isis -c conda-forge -y python=3.6 && \
+    echo 'eval "$(command conda shell.bash hook 2> /dev/null)"' >> /etc/skel/.bashrc
+    #conda update --all --quiet --yes
+
+RUN conda create -n isis -c conda-forge -y python=3.6 && \
     source activate isis && \
     conda config --append channels usgs-astrogeology     && \
     conda config --append channels default                && \
@@ -56,7 +58,8 @@ RUN set -x && \
     conda clean -a && \
     python /opt/conda/envs/isis/scripts/isisVarInit.py \
     --data-dir=$ISISDATA  \
-    --test-dir=$ISISTESTDATA
+    --test-dir=$ISISTESTDATA && \
+    source activate isis
 
-ENV JUPYTER_ENABLE_LAB=no
+
 RUN echo "source activate isis" >> $HOME/.bashrc
