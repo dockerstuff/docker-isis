@@ -1,5 +1,6 @@
+# As BASE_IMAGE we need some ubuntu (currently, ubuntu:20.04) flavor.
+# We should have conda installed (we rely on conda in PATH)
 ARG BASE_IMAGE=osgeo/gdal:ubuntu-small-3.3.0
-
 FROM $BASE_IMAGE
 
 MAINTAINER "Carlos Brandt <carloshenriquebrandt at gmail>"
@@ -41,7 +42,7 @@ RUN conda update conda                                      && \
     conda clean -a
 
 ARG ISISDATA=/isis/data
-ADD etc/isis.sh /etc/profile.d/isis.sh
+COPY etc/isis.sh /etc/profile.d/isis.sh
 RUN sed -i "s,ISISDATA\=.*,ISISDATA\=${ISISDATA}," /etc/profile.d/isis.sh
 VOLUME "${ISISDATA}"
 
