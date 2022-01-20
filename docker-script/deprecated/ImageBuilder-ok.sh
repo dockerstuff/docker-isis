@@ -52,8 +52,10 @@ if [[ $REPLY =~ ^[Yy]$ ]]
   then
     if [[ $jupyter =~ ^[Yy1]$ ]]
       then
+        BASE_IMAGE="jupyter/base-notebook:lab-3.2.8"
         JUPYTER_GISPY_IMAGE="jupyter-gispy:gdal"
         docker build -t "$JUPYTER_GISPY_IMAGE"               \
+                --build-arg BASE_IMAGE="$BASE_IMAGE" \
                 -f $PWD/dockerfiles/$GISPY_DOCKERFILE .
         BASE_IMAGE=$JUPYTER_GISPY_IMAGE
         ISIS_IMAGE="isis5-asp3:jupyter-gispy"

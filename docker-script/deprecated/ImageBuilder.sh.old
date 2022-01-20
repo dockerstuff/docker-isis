@@ -1,8 +1,9 @@
 #!/bin/bash
 
 jupyter="y"
+gispy="y"
 SHORT=J:,j:,G:,g:,h
-LONG=JUPYTER:,jupyter:,help
+LONG=JUPYTER:,jupyter:,GISPY:,gispy:,help
 OPTS=$(getopt -a -n test --options $SHORT --longoptions $LONG -- "$@")
 eval set -- "$OPTS"
 while :
@@ -14,6 +15,14 @@ do
       ;;
     -j | --jupyter )
       jupyter="$2"
+      shift 2
+      ;;
+    -g | --GISPY )
+      gispy="$2"
+      shift 2
+      ;;
+    -g | --gispy )
+      gispy="$2"
       shift 2
       ;;
     -h | --help)
@@ -40,25 +49,50 @@ JUPYTER_ENABLE_LAB='yes'
 DOCKERFILE=isis5-asp.dockerfile
 GISPY_DOCKERFILE=gispy.dockerfile
 
-BASE_IMAGE="condaforge/mambaforge"
-ISIS_IMAGE="isis5-asp3:base"
-
 echo "ISIS version $ISIS_VERSION will be installed"
 echo "NASA_Ames Stereo Pipeline 3.0.0 will be installed"
-echo "Jupyter + GIS-python install: $jupyter"
+echo "Jupyter install: $jupyter"
+echo "GISpy install: $gispy"
 read -p "Continue? " -n 1 -r
 
 if [[ $REPLY =~ ^[Yy]$ ]]
   then
+    BASE_IMAGE="osgeo/gdal:ubuntu-full-$GDAL_VERSION"
+    ISIS_IMAGE="isis5-asp3:latest"
+
     if [[ $jupyter =~ ^[Yy1]$ ]]
       then
-        JUPYTER_GISPY_IMAGE="jupyter-gispy:gdal"
-        docker build -t "$JUPYTER_GISPY_IMAGE"               \
-                -f $PWD/dockerfiles/$GISPY_DOCKERFILE .
-        BASE_IMAGE=$JUPYTER_GISPY_IMAGE
-        ISIS_IMAGE="isis5-asp3:jupyter-gispy"
+        BASE_IMAGE="osgeo/gdal:ubuntu-full-$GDAL_VERSION"
+        echo "\n-j Creating jupyter:gdal image"
+        JUPYTER_IMAGE="jupyter:gdal"
+        git clone 'https://github.com/jupyter/docker-stacks.git'
+        (
+        cd docker-stacks
+        docker build -t "$JUPYTER_IMAGE"                 \
+                --build-arg ROOT_CONTAINER="$BASE_IMAGE" \
+                base-notebook/
+        )
+        [ $? ] && rm -rf docker-stacks && echo "Docker image $OUTPUT_IMAGE built."
+        ISIS_IMAGE="isis5-asp3:jupyter"
+        BASE_IMAGE=$JUPYTER_IMAGE
       else
         JUPYTER_ENABLE_LAB='no'
+    fi
+
+    if [[ $gispy =~ ^[Yy1]$ ]]
+      then
+        echo "Creating jupyter-gispy:gdal image"
+        GISPY_IMAGE="gispy:gdal"
+        docker build -t "$GISPY_IMAGE"               \
+                --build-arg BASE_IMAGE="$BASE_IMAGE" \
+                -f $PWD/dockerfiles/$GISPY_DOCKERFILE .
+        BASE_IMAGE=$GISPY_IMAGE
+        ISIS_IMAGE="isis5-asp3:gispy"
+    fi
+
+    if [[ $jupyter =~ ^[Nn0]$ ]] && [[ $gispy =~ ^[Nn0]$ ]]
+      then
+        BASE_IMAGE="condaforge/mambaforge"
     fi
 
     echo "Creating $ISIS_IMAGE image"
