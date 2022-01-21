@@ -7,7 +7,8 @@ MAINTAINER "Giacomo Nodjoumi <giacomo.nodjoumi@hyranet.info>"
 USER root
 RUN apt-get update && \
     apt-get upgrade -y \
-    && apt-get install –no-install-recommends -y python3-pip \
+    && apt-get install --no-install-recommends -y \
+			  python3-pip \
                           git-core \
                           tzdata \
                           vim \

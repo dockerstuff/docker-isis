@@ -37,7 +37,7 @@ ASP_VERSION='3.0.0'
 ISIS_VERSION='5'
 GDAL_VERSION='3.4.1'
 JUPYTER_ENABLE_LAB='yes'
-DOCKERFILE=isis5-asp.dockerfile
+DOCKERFILE=isis5-asp3.dockerfile
 GISPY_DOCKERFILE=gispy.dockerfile
 
 BASE_IMAGE="condaforge/mambaforge"

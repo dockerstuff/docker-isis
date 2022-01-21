@@ -23,7 +23,7 @@ ENV PATH="${CONDA_DIR}/bin:${PATH}"
 
 RUN DEBIAN_FRONTEND=noninteractive        \
     && apt-get update --fix-missing       \
-    && apt-get install –no-install-recommends -y \
+    && apt-get install --no-install-recommends -y \
           bzip2           \
           ca-certificates \
           curl            \
