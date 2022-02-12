@@ -1,4 +1,4 @@
-ARG BASE_IMAGE=osgeo/gdal:ubuntu-full-3.4.1
+ARG BASE_IMAGE=condaforge/mambaforge
 
 FROM $BASE_IMAGE
 
@@ -15,7 +15,6 @@ RUN mkdir -p $ISISDATA && \
 
 ARG ASP_VERSION="3.0.0"
 ARG ISIS_VERSION="5"
-ARG CONDA_MIRROR='https://github.com/conda-forge/miniforge/releases/latest/download'
 ARG CONDA_DIR='/opt/conda'
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
@@ -45,7 +44,6 @@ RUN set -x && \
     conda config --append channels usgs-astrogeology     && \
     conda config --append channels default                && \
     conda config --env --add channels nasa-ames-stereo-pipeline && \
-    #conda install -n isis -y https://anaconda.org/conda-forge/jpeg/9b/download/linux-64/jpeg-9b-h470a237_3.tar.bz2 && \
     mamba install -n isis -c usgs-astrogeology isis=$ISIS_VERSION && \
     mamba install -n isis -c nasa-ames-stereo-pipeline stereo-pipeline==$ASP_VERSION && \
     conda clean -a && \
