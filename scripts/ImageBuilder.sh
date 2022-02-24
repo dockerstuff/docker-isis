@@ -3,7 +3,7 @@
 gispy="y"
 SHORT=G:,g:,h
 LONG=GISPY:,gispy:,help
-OPTS=$(getopt -a -n test --options $SHORT --longoptions $LONG -- "$@")
+OPTS=$(getopt -a -n jupyterhub --options $SHORT --longoptions $LONG -- "$@")
 eval set -- "$OPTS"
 while :
 do
@@ -52,7 +52,7 @@ if [[ $jupyter =~ ^[Yy1]$ ]]
     docker build -t "$JUPYTER_GISPY_IMAGE"               \
             -f $PWD/dockerfiles/$GISPY_DOCKERFILE .
     BASE_IMAGE=$JUPYTER_GISPY_IMAGE
-    ISIS_IMAGE="isis5-asp3:jupyter-gispy"
+    ISIS_IMAGE="isis5-asp3-gispy:lab"
   else
     JUPYTER_ENABLE_LAB='no'
 fi

@@ -3,7 +3,7 @@
 jupyter="y"
 SHORT=J:,j:,G:,g:,h
 LONG=JUPYTER:,jupyter:,help
-OPTS=$(getopt -a -n test --options $SHORT --longoptions $LONG -- "$@")
+OPTS=$(getopt -a -n jupyterhub --options $SHORT --longoptions $LONG -- "$@")
 eval set -- "$OPTS"
 while :
 do
@@ -37,7 +37,7 @@ ASP_VERSION='3.0.0'
 ISIS_VERSION='5'
 GDAL_VERSION='3.4.1'
 JUPYTER_ENABLE_LAB='yes'
-DOCKERFILE=isis5-asp.dockerfile
+DOCKERFILE=isis5-asp3-standalone.dockerfile
 GISPY_DOCKERFILE=gispy.dockerfile
 
 BASE_IMAGE="condaforge/mambaforge"
@@ -55,10 +55,10 @@ if [[ $REPLY =~ ^[Yy]$ ]]
         BASE_IMAGE="jupyter/base-notebook:lab-3.2.8"
         JUPYTER_GISPY_IMAGE="jupyter-gispy:gdal"
         docker build -t "$JUPYTER_GISPY_IMAGE"               \
-                --build-arg BASE_IMAGE="$BASE_IMAGE" \
-                -f $PWD/dockerfiles/$GISPY_DOCKERFILE .
+                --build-arg BASE_IMAGE="$BASE_IMAGE"        \
+                -f ../dockerfiles/$GISPY_DOCKERFILE .
         BASE_IMAGE=$JUPYTER_GISPY_IMAGE
-        ISIS_IMAGE="isis5-asp3:jupyter-gispy"
+        ISIS_IMAGE="isis5-asp3-gispy:standalone-lab"
       else
         JUPYTER_ENABLE_LAB='no'
     fi
@@ -68,7 +68,7 @@ if [[ $REPLY =~ ^[Yy]$ ]]
             --build-arg BASE_IMAGE="$BASE_IMAGE"               \
             --build-arg ISIS_VERSION="$ISIS_VERSION"           \
             --build-arg ASP_VERSION="$ASP_VERSION"             \
-            -f $PWD/dockerfiles/$DOCKERFILE .
+            -f ../dockerfiles/$DOCKERFILE .
     [ $? ] && echo "Docker image $ISIS_IMAGE built."
 else
     echo "Aborting"

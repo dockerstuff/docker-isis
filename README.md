@@ -1,108 +1,119 @@
-# USGS ISIS3 Dockerfile
+# Docker JupyterHub + DockerSpawner with GitHub/GitLab OAuth + USGS ISISv5-ASP3+JupyterLab
 
-USGS Integrated Software for Imagers and Spectrometers v3 (ISIS3) Docker container.
+This repository contain all the configuration files to build and deploy a containerized JupyterHub wich deploy singleuser USGS ISIS5-ASP3-GISPY + JupyterLab instances in separate containers using DockerSpawner authenticated with GitHub or GitLab OAuth and allowed users configuration file.
 
-This (docker) container definition we provide [here](dockerfile/Dockerfile) is based on [ISIS install document (at Github)](https://github.com/USGS-Astrogeology/ISIS3/blob/dev/README.md#Installation).
-ISIS is installed with Conda in its own environment (`isis`) under `/opt/conda`).
-
-> To not conflict with other common commands (e.g., `pip`), conda binary path is positioned at last in
-> `$PATH` environment variables. This note is to mind you about paying attention when installing new packages:
-> ISIS environment should be managed by `conda` while python packages should be managed by OS' `pip`/`pip3`.
-
-ISIS3 documentation/resources:
-
-- https://isis.astrogeology.usgs.gov/
-- https://github.com/USGS-Astrogeology/ISIS3
-- https://astrodiscuss.usgs.gov/
+Derived from [jupyterhub/jupyterhub-deploy-docker](https://github.com/jupyterhub/jupyterhub-deploy-docker) and [docker-isis](https://github.com/europlanet-gmap/docker-isis3), [docker-gispy](https://github.com/europlanet-gmap/docker-gispy) and [docker-jupyterhub](https://github.com/europlanet-gmap/docker-jupyterhub)
 
 
-## Containers
+## Structure
 
-The images built from the [dockerfile](dockerfile/) can be found at the [DockerHub](https://hub.docker.com/r/chbrandt/isis3).
-The following tags are defined:
+<img src="ReadmeImages/scheme.png?raw=true" alt="Test Example"
+	title="Test Example" width="1000"/>
 
-* `chbrandt/isis3:latest`: based on `ubuntu:20.04` (as in [osgeo/gdal](https://github.com/OSGeo/gdal/blob/master/gdal/docker/ubuntu-full/Dockerfile))
-* `chbrandt/isis3:gdal`: based on [`osgeo/gdal`](https://hub.docker.com/r/osgeo/gdal)
-* `chbrandt/isis3:gispy`: based on [`chbrandt/gispy:gdal`](https://hub.docker.com/r/chbrandt/gispy)
-* `chbrandt/isis3:jupyterhub`: [jupyter-hub install](https://github.com/chbrandt/docker-jupyterhub/blob/main/dockerfile/Dockerfile) on top of "isis3:gispy"
+## Requirements
 
-The container has the following [ISIS3 environment variables](dockerfile/etc/isis.sh):
+* docker
+* GitHub/GitLab app for authentication see [Here](https://docs.github.com/en/developers/apps/building-github-apps/creating-a-github-app)
+* ISIS-DATA folder (for v4+) - local or shared folder (e.g. nfs) see [Here](https://github.com/USGS-Astrogeology/ISIS3)
 
-```bash
-ISISROOT=/opt/conda
-ISISDATA=/isis/data
-ISIS3DATA="${ISISDATA}"
-ISISTESTDATA=/isis/data_test
+## How-To
+
+1) Clone this repository and enter the main folder
+2) Create .env file in this folder then, add and customize the following variables.
+
+```
+DOCKER_NETWORK_NAME='jupyterhub-network'
+HUB_DATA_VOL='jupyterhub-data'
+HUB_DB_VOL='jupytersql-data'
+ISIS_DATA_VOL='isis-data-vol'
+HUB_DATA_VOL_PATH='FULL-PATH-ON-HOST-FOR-JUPYTERHUB-DATA'
+HUB_DB_VOL_PATH='FULL-PATH-ON-HOST-FOR-JUPYTERHUB-DATABASE'
+ISIS_DATA_PATH='FULL-PATH-ON-HOST-FOR-ISIS-DATA'
+POSTGRES_DB=jupyterhub
+POSTGRES_PASSWORD=database-password
+DOCKER_MACHINE_NAME=jupyterhub
+DOCKER_NOTEBOOK_PORT=9999
+
+#### replace GITHUB with GITLAB if needed
+
+GITHUB_CLIENT_ID=
+GITHUB_CLIENT_SECRET=
+GITHUB_CALLBACK_URL=http://localhost:${DOCKER_NOTEBOOK_PORT}/hub/oauth_callback
+
+
+### DO NOT EDIT
+DOCKER_NOTEBOOK_IMAGE=isis5-asp3-gispy:lab
+LOCAL_NOTEBOOK_IMAGE=isis5-asp3-gispy:lab
+DOCKER_NOTEBOOK_DIR=/home/jovyan/work
+DATA_VOLUME_CONTAINER=/data
+DB_VOLUME_CONTAINER=/var/lib/postgresql/data
+
+```
+3) create *userlist* file list containing only the authorized github/gitlab usernames and admin flag.
+
+E.g. *userlist* file containing:
+```
+Giacomo
+Chtulhu admin
+```
+4) Make the main scripts executable
+```
+chmod +x script/ImageBuilder.sh
+
+chmod +x Installer.sh
+```
+5) Run the installer
+```
+./Installer.sh
 ```
 
-
-## Run
-
-If you are familiar with ISIS3 you know that ISIS needs its kernels/ancillary data -- the famous `ISISDATA` -- to do virtually anything.
-By default, in `isis3` containers expect to find `ISIS3DATA` mounted at `/isis/data` directory.
-
-> Since "ISISDATA" is not included in the container the user must _mount_ a local copy of "ISISDATA"
-> as container's `/isis/data`. The examples below show how to do it.
-
-### ISIS3 command-line
-
-In this example, the location for `ISIS3DATA` in the local/host filesystem is `/path/to/isis3data`.
-Running a `isis3` container with the ancillary data (at `/isis/data`):
-
-```bash
-$ docker run -it --rm --name isis3 \
-    -v "/path/to/isis3data":"/isis/data" \
-    chbrandt/isis3
+**NOTE** It is possible to create a standalone isis5-asp3-gispy+jupyterlab image by passing options -JH N or -jh n to the installer.
+```
+./Installer -jh n
 ```
 
-### ISIS3 + GDAL command-line
+## Installer details
 
-Let's run the container with GDAL as in `osgeo/gdal`. 
-ISIS is installed in its own _conda_ environment, separated from the system.
+The installer scripts take care of everything!
 
-Let's also _bind_ (mount) our current directory (`$PWD`) to container's `/mnt/data`:
+* check if DOCKER_NETWORK_NAME exists and create it binding HUB_DATA_VOL_PATH if missing
+* check if HUB_DATA_VOL exists and create it if missing
+* check if HUB_DB_VOL exists and create it binding HUB_DB_VOL_PATH if missing
+* check if ISIS_DATA_VOL exists and create it binding ISIS_DATA_PATH if missing
+* build the isis5asp3-gispy:lab image
 
-```bash
-$ docker run -it --rm --name isis3_gdal \
-    -v "$PWD":"/mnt/data" \
-    -v "/path/to/isis3data":"/isis/data" \
-    chbrandt/isis3:gdal
+## isis5asp3-gispy:lab image
+
+This image is a combined build of:
+
+* USGS ISIS v5
+* NASA AMES Stereo Pipeline (ASP) v3
+* jupyter-stack/base-notebook  
+* GISPY image containing several common used python package for processing planetary images and GIS data (e.g. rasterio, spectral, fiona, shapely) and various utilities (e.g. numpy, matoplotlib, pandas, scikit-image, etc)
+
+Then ISIS v5 can be used in jupyterlab terminal or jupyter noteboo through [kalasiris](https://github.com/rbeyer/kalasiris) package by adding in the first cell of the notebook the following code:
+```
+import os
+os.environ["ISISROOT"]="/opt/conda/envs/isis/"
+os.environ["ISISDATA"]="/isis/data"
+import kalasiris as isis
 ```
 
-### ISIS3 + Jupyter-Hub 
+For an example notebook see [PyISIS-Parallel](https://github.com/Hyradus/PyISIS-Parallel/tree/main/PyISIS-Parallel)
 
-If you would like a graphical interface to use ISIS, GDAL and many Python GIS libraries you should use
-the `jupyterhub` tag.
-It is based on `chbrandt/gispy:gdal` (which uses `apt`/`pip` as package managers) with Jupyter-Hub
-on top. ISIS is installed (as always) in its own conda environment.
+## ISIS-DATA
 
-```bash
-$ docker run -it --rm --name isis3_jupyter \
-    -p 8000:8000 \
-    -v "$PWD":"/mnt/data" \
-    -v "/path/to/isis3data":"/isis/data" \
-    chbrandt/isis3:jupyterhub
-```
+ISIS-DATA is mounted to the JupyterHub container and to each spawned container.
 
-### Redefining ISIS3 environment variables
-> ISIS3 environment variables are defined in container's [/etc/profile.d/isis.sh](dockerfile/etc/isis.sh).
+## Persistent Data
 
-* If you want to customize ISIS3 variables, overwrite the default bash-profile:
+All data is persistent using docker volumes.
 
-```bash
-$ docker run -it --name isis3 \
-    -v "$PWD/dockerfile/etc/isis.sh":"/etc/profile.d/isis.sh" \
-    chbrandt/isis3
-```
+# TO-DO
 
-* If you're running the `jupyterhub` image, it comes with Jupyterhub:
-
-
-## Build examples
-
-* Use `chbrandt/gispy:gdal` (currently `3.3.0`)  as base for ISIS:
-    
-    ```
-    $ docker build -t chbrandt/isis3:gispy --build-arg BASE_IMAGE="chbrandt/gispy:gdal" dockerfile/.
-    ```
-    
+* [ ] Multi user test during processing
+* [ ] Add concurrent OAuth
+* [ ] Add configuration for spawned container resource limits
+* [ ] Switch to kubernetes
+* [ ] Integrate with portainer
+* [ ] Integrate with Guacamole
