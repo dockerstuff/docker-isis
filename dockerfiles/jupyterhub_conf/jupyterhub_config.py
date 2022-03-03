@@ -42,8 +42,11 @@ c.DockerSpawner.notebook_dir = notebook_dir
 # c.DockerSpawner.extra_create_kwargs.update({ 'volume_driver': 'local' })
 # Remove containers once they are stopped
 isis_data = os.environ.get('ISIS_DATA_VOL')
+preset_notebooks = os.environ.get('PRESET_NB_DATA_VOL')
 c.DockerSpawner.volumes = { 'jupyterhub-user-{username}':notebook_dir,
                             isis_data:'/isis/data',
+                             'jupyterhub-user-{username}':notebook_dir,
+                            preset_notebooks:notebook_dir+'/preset_notebooks',
                           }
 c.DockerSpawner.remove = True
 # For debugging arguments passed to spawned containers

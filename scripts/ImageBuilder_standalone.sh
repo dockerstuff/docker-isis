@@ -56,7 +56,7 @@ if [[ $REPLY =~ ^[Yy]$ ]]
         JUPYTER_GISPY_IMAGE="jupyter-gispy:gdal"
         docker build -t "$JUPYTER_GISPY_IMAGE"               \
                 --build-arg BASE_IMAGE="$BASE_IMAGE"        \
-                -f ../dockerfiles/$GISPY_DOCKERFILE .
+                -f $PWD/dockerfiles/$GISPY_DOCKERFILE .
         BASE_IMAGE=$JUPYTER_GISPY_IMAGE
         ISIS_IMAGE="isis5-asp3-gispy:standalone-lab"
       else
@@ -68,7 +68,7 @@ if [[ $REPLY =~ ^[Yy]$ ]]
             --build-arg BASE_IMAGE="$BASE_IMAGE"               \
             --build-arg ISIS_VERSION="$ISIS_VERSION"           \
             --build-arg ASP_VERSION="$ASP_VERSION"             \
-            -f ../dockerfiles/$DOCKERFILE .
+            -f $PWD/dockerfiles/$DOCKERFILE .
     [ $? ] && echo "Docker image $ISIS_IMAGE built."
 else
     echo "Aborting"

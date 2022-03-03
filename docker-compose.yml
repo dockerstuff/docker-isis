@@ -32,6 +32,7 @@ services:
       - "./dockerfiles/jupyterhub_conf/jupyterhub_config.py:/srv/jupyterhub/jupyterhub_config.py"
       - "./userlist:/srv/jupyterhub/userlist"
       - "isis-data:/isis/data"
+      - "preset-notebooks:/notebooks"
     ports:
       - "${DOCKER_NOTEBOOK_PORT}:8000"
     links:
@@ -60,6 +61,9 @@ volumes:
   isis-data:
     external:
       name: ${ISIS_DATA_VOL}
+  preset-notebooks:
+    external:
+      name: ${PRESET_NB_DATA_VOL}
 
 networks:
   default:

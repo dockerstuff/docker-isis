@@ -22,11 +22,15 @@ RUN apt-get update && \
                           fiona \
                           geopandas \
                           geoplot \
+                          holoviews \
+                          hvplot \
                           kalasiris \
                           matplotlib \
                           numpy \
+                          plotly \
                           pygeos \
                           rasterio \
+                          rioxarray \
                           scikit-image \
                           scipy \
                           shapely \

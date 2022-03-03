@@ -47,6 +47,7 @@ if [[ $jhub =~ ^[Yy1]$ ]]
     echo $ISIS_DATA_VOL
     echo $ISIS_DATA_PATH
     echo $POSTGRES_DB
+    echo $PRESET_NB_DATA_VOL_PATH
 
     echo "Creating docker network and volumes"
     docker network inspect $DOCKER_NETWORK_NAME >/dev/null 2>&1 || docker network create $DOCKER_NETWORK_NAME
@@ -57,9 +58,11 @@ if [[ $jhub =~ ^[Yy1]$ ]]
     echo "Docker volumes created: ${HUB_DB_VOL}"
     docker volume inspect $ISIS_DATA_VOL > /dev/null 2>&1 || docker volume create --driver local --opt type=volume --opt device=$ISIS_DATA_PATH --opt o=bind --name $ISIS_DATA_VOL
     echo "Docker volumes created: ${ISIS_DATA_VOL}"
+    docker volume inspect $PRESET_NB_DATA_VOL > /dev/null 2>&1 || docker volume create --driver local --opt type=volume --opt device=$PRESET_NB_DATA_VOL_PATH --opt o=bind --name $PRESET_NB_DATA_VOL
+    echo "Docker volumes created: ${PRESET_NB_DATA_VOL}"
     echo "Building base images"
+    sleep 2
     ./scripts/ImageBuilder.sh
-
     docker-compose --f docker-compose.yml --env-file .env build
   else
     ./scripts/ImageBuilder_standalone.sh
