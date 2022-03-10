@@ -8,11 +8,11 @@ eval set -- "$OPTS"
 while :
 do
   case "$1" in
-    -G | --JUPYTER )
+    -G | --GISPY )
       gispy="$2"
       shift 2
       ;;
-    -g | --jupyter )
+    -g | --gispy )
       gispy="$2"
       shift 2
       ;;
@@ -46,11 +46,11 @@ echo "ISIS version $ISIS_VERSION will be installed"
 echo "NASA_Ames Stereo Pipeline 3.0.0 will be installed"
 echo "GIS-python install: $gispy"
 
-if [[ $jupyter =~ ^[Yy1]$ ]]
+if [[ $gispy =~ ^[Yy1]$ ]]
   then
     JUPYTER_GISPY_IMAGE="jupyter-gispy:gdal"
     docker build -t "$JUPYTER_GISPY_IMAGE"               \
-            -f $PWD/dockerfiles/$GISPY_DOCKERFILE .
+            -f ../dockerfiles/$GISPY_DOCKERFILE .
     BASE_IMAGE=$JUPYTER_GISPY_IMAGE
     ISIS_IMAGE="isis5-asp3-gispy:lab"
   else
@@ -62,5 +62,5 @@ docker build -t "$ISIS_IMAGE"                              \
         --build-arg BASE_IMAGE="$BASE_IMAGE"               \
         --build-arg ISIS_VERSION="$ISIS_VERSION"           \
         --build-arg ASP_VERSION="$ASP_VERSION"             \
-        -f $PWD/dockerfiles/$DOCKERFILE .
+        -f ../dockerfiles/$DOCKERFILE .
 [ $? ] && echo "Docker image $ISIS_IMAGE built."

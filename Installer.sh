@@ -62,8 +62,9 @@ if [[ $jhub =~ ^[Yy1]$ ]]
     echo "Docker volumes created: ${PRESET_NB_DATA_VOL}"
     echo "Building base images"
     sleep 2
-    ./scripts/ImageBuilder.sh
+    ./scripts/ImageBuilder_standalone.sh
     docker-compose --f docker-compose.yml --env-file .env build
+
   else
     ./scripts/ImageBuilder_standalone.sh
 fi

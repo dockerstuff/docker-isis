@@ -46,30 +46,24 @@ ISIS_IMAGE="isis5-asp3:base"
 echo "ISIS version $ISIS_VERSION will be installed"
 echo "NASA_Ames Stereo Pipeline 3.0.0 will be installed"
 echo "Jupyter + GIS-python install: $jupyter"
-read -p "Continue? " -n 1 -r
 
-if [[ $REPLY =~ ^[Yy]$ ]]
-  then
-    if [[ $jupyter =~ ^[Yy1]$ ]]
-      then
-        BASE_IMAGE="jupyter/base-notebook:lab-3.2.8"
-        JUPYTER_GISPY_IMAGE="jupyter-gispy:gdal"
-        docker build -t "$JUPYTER_GISPY_IMAGE"               \
-                --build-arg BASE_IMAGE="$BASE_IMAGE"        \
-                -f $PWD/dockerfiles/$GISPY_DOCKERFILE .
-        BASE_IMAGE=$JUPYTER_GISPY_IMAGE
-        ISIS_IMAGE="isis5-asp3-gispy:standalone-lab"
-      else
-        JUPYTER_ENABLE_LAB='no'
-    fi
+  if [[ $jupyter =~ ^[Yy1]$ ]]
+    then
+      BASE_IMAGE="jupyter/base-notebook:lab-3.2.8"
+      JUPYTER_GISPY_IMAGE="jupyter-gispy:gdal"
+      docker build -t "$JUPYTER_GISPY_IMAGE"               \
+              --build-arg BASE_IMAGE="$BASE_IMAGE"        \
+              -f $PWD/dockerfiles/$GISPY_DOCKERFILE .
+      BASE_IMAGE=$JUPYTER_GISPY_IMAGE
+      ISIS_IMAGE="isis5-asp3-gispy:standalone-lab"
+    else
+      JUPYTER_ENABLE_LAB='no'
+  fi
 
-    echo "Creating $ISIS_IMAGE image"
-    docker build -t "$ISIS_IMAGE"                              \
-            --build-arg BASE_IMAGE="$BASE_IMAGE"               \
-            --build-arg ISIS_VERSION="$ISIS_VERSION"           \
-            --build-arg ASP_VERSION="$ASP_VERSION"             \
-            -f $PWD/dockerfiles/$DOCKERFILE .
-    [ $? ] && echo "Docker image $ISIS_IMAGE built."
-else
-    echo "Aborting"
-fi
+  echo "Creating $ISIS_IMAGE image"
+  docker build -t "$ISIS_IMAGE"                              \
+          --build-arg BASE_IMAGE="$BASE_IMAGE"               \
+          --build-arg ISIS_VERSION="$ISIS_VERSION"           \
+          --build-arg ASP_VERSION="$ASP_VERSION"             \
+          -f $PWD/dockerfiles/$DOCKERFILE .
+  [ $? ] && echo "Docker image $ISIS_IMAGE built."
