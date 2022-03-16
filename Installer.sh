@@ -17,9 +17,9 @@ do
       shift 2
       ;;
     -h | --help)
-      echo -e "This is a script to build standalone docker-isis5-asp3-gispy + jupyter lab or jupyterhub with dockerspawner isis5asp3-gispy:
+      echo -e "This is a script to build standalone docker-isis5-asp3-gispy + jupyter lab or jupyterhub with dockerspawner isis5asp3-gispy:lab:
             \nDefaut JUPYTERHUB+dockerspawner!
-            \n-n to install Standalone"
+            \n'-jhub -n' to install Standalone"
       exit 2
       ;;
     --)
@@ -62,9 +62,9 @@ if [[ $jhub =~ ^[Yy1]$ ]]
     echo "Docker volumes created: ${PRESET_NB_DATA_VOL}"
     echo "Building base images"
     sleep 2
-    ./scripts/ImageBuilder_standalone.sh
+    ./scripts/ImageBuilder.sh
     docker-compose --f docker-compose.yml --env-file .env build
 
   else
-    ./scripts/ImageBuilder_standalone.sh
+    ./scripts/ImageBuilder.sh
 fi
