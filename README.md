@@ -19,35 +19,44 @@ Derived from [jupyterhub/jupyterhub-deploy-docker](https://github.com/jupyterhub
 ## How-To
 
 1) Clone this repository and enter the main folder
-2) Create .env file in this folder then, add and customize the following variables.
+2) EDIT env_example and rename as .env )
 
+
+*Basic .env variables*
 ```
-DOCKER_NETWORK_NAME='jupyterhub-network'
-HUB_DATA_VOL='jupyterhub-data'
-HUB_DB_VOL='jupytersql-data'
-ISIS_DATA_VOL='isis-data-vol'
-HUB_DATA_VOL_PATH='FULL-PATH-ON-HOST-FOR-JUPYTERHUB-DATA'
-HUB_DB_VOL_PATH='FULL-PATH-ON-HOST-FOR-JUPYTERHUB-DATABASE'
-ISIS_DATA_PATH='FULL-PATH-ON-HOST-FOR-ISIS-DATA'
+### JupyterHUB variables
+
+## Docker network
+NETWORK='jupyterhub-network'
+
+## Volumes Names
+JHDATA='jupyterhub-data'
+JHDB='jupyterhub-sqldata'
+ISISDATA='isis-data'
+SHARED='shared-data'
+
+## Volumes Paths
+JHDATA_PATH='/mnt/DATS-EXT4/docker-vols/hub-data-vol'
+JHDB_PATH='/mnt/DATS-EXT4/docker-vols/hub-db-vol'
+ISISDATA_PATH='/mnt/NAS/OrbitalData/ISIS-DATA/'
+SHARED_PATH='/mnt/DATS-EXT4/docker-vols/preset-data-vol'
+
+## Image for docker-spawner (Image to be used for each user)
+NOTEBOOK_IMAGE=isis5-asp3-gispy:lab
+
+## JupyterHUB access port
+NOTEBOOK_PORT=9988
+
+## JupyterHUB database
+# Name, user and pwd of JupyterHub postgres database
+DB_VOLUME_HOST=jupyterhub-db-data
 POSTGRES_DB=jupyterhub
-POSTGRES_PASSWORD=database-password
-DOCKER_MACHINE_NAME=jupyterhub
-DOCKER_NOTEBOOK_PORT=9999
+POSTGRES_PASSWORD=jupysqlpswd!
 
-#### replace GITHUB with GITLAB if needed
-
-GITHUB_CLIENT_ID=
-GITHUB_CLIENT_SECRET=
-GITHUB_CALLBACK_URL=http://localhost:${DOCKER_NOTEBOOK_PORT}/hub/oauth_callback
-
-
-### DO NOT EDIT
-DOCKER_NOTEBOOK_IMAGE=isis5-asp3-gispy:lab
-LOCAL_NOTEBOOK_IMAGE=isis5-asp3-gispy:lab
-DOCKER_NOTEBOOK_DIR=/home/jovyan/work
-DATA_VOLUME_CONTAINER=/data
-DB_VOLUME_CONTAINER=/var/lib/postgresql/data
-
+## OAuthentication configuration
+GITHUB_CLIENT_ID=0180328a17738c6ed04c
+GITHUB_CLIENT_SECRET=5ab0622ec5eeddfdf2f7ace14e38284d015d11f3
+GITHUB_CALLBACK_URL=http://localhost:9988/hub/oauth_callback
 ```
 3) create *userlist* file list containing only the authorized github/gitlab usernames and admin flag.
 

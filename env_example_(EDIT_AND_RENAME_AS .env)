@@ -1,0 +1,33 @@
+### JupyterHUB variables
+
+## Docker network
+NETWORK='jupyterhub-network'
+
+## Volumes Names
+JHDATA='jupyterhub-data'
+JHDB='jupyterhub-sqldata'
+ISISDATA='isis-data'
+SHARED='shared-data'
+
+## Volumes Paths (MUST BE EDITED)
+JHDATA_PATH='FULL-PATH-ON-HOST-FOR-JUPYTERHUB-DATA'
+JHDB_PATH='FULL-PATH-ON-HOST-FOR-JUPYTERHUB-DATABASE'
+ISISDATA_PATH='FULL-PATH-ON-HOST-FOR-ISIS-DATA'
+SHARED_PATH='FULL-PATH-ON-HOST-FOR-SHARED-DATA'
+
+## Image for docker-spawner (Image to be used for each user)
+NOTEBOOK_IMAGE=isis5-asp3-gispy:lab
+
+## JupyterHUB access port
+NOTEBOOK_PORT=9988
+
+## JupyterHUB database
+# Name, user and pwd of JupyterHub postgres database
+DB_VOLUME_HOST=jupyterhub-db-data
+POSTGRES_DB=jupyterhub
+POSTGRES_PASSWORD=jupysqlpswd!
+
+## OAuthentication configuration (MUST BE EDITED)
+GITHUB_CLIENT_ID=
+GITHUB_CLIENT_SECRET=
+GITHUB_CALLBACK_URL=http://localhost:GITHUB-APP-PORT/hub/oauth_callback

@@ -39,31 +39,21 @@ if [[ $jhub =~ ^[Yy1]$ ]]
     source .env
     set +o allexport
 
-    echo $DOCKER_NETWORK_NAME
-    echo $HUB_DATA_VOL
-    echo $HUB_DB_VOL
-    echo $HUB_DATA_VOL_PATH
-    echo $HUB_DB_VOL_PATH
-    echo $ISIS_DATA_VOL
-    echo $ISIS_DATA_PATH
-    echo $POSTGRES_DB
-    echo $PRESET_NB_DATA_VOL_PATH
-
     echo "Creating docker network and volumes"
-    docker network inspect $DOCKER_NETWORK_NAME >/dev/null 2>&1 || docker network create $DOCKER_NETWORK_NAME
-    echo "Docker network created: ${DOCKER_NETWORK_NAME}"
-    docker volume inspect $HUB_DATA_VOL > /dev/null 2>&1 || docker volume create --driver local --opt type=volume --opt device=$HUB_DATA_VOL_PATH --opt o=bind --name $HUB_DATA_VOL
-    echo "Docker volumes created: ${HUB_DATA_VOL}"
-    docker volume inspect $HUB_DB_VOL > /dev/null 2>&1 || docker volume create --driver local --opt type=volume --opt device=$HUB_DB_VOL_PATH --opt o=bind --name $HUB_DB_VOL
-    echo "Docker volumes created: ${HUB_DB_VOL}"
-    docker volume inspect $ISIS_DATA_VOL > /dev/null 2>&1 || docker volume create --driver local --opt type=volume --opt device=$ISIS_DATA_PATH --opt o=bind --name $ISIS_DATA_VOL
-    echo "Docker volumes created: ${ISIS_DATA_VOL}"
-    docker volume inspect $PRESET_NB_DATA_VOL > /dev/null 2>&1 || docker volume create --driver local --opt type=volume --opt device=$PRESET_NB_DATA_VOL_PATH --opt o=bind --name $PRESET_NB_DATA_VOL
-    echo "Docker volumes created: ${PRESET_NB_DATA_VOL}"
+    docker network inspect $NETWORK >/dev/null 2>&1 || docker network create $NETWORK
+    echo "Docker network created: ${NETWORK}"
+    docker volume inspect $JHDATA > /dev/null 2>&1 || docker volume create --driver local --opt type=volume --opt device=$JHDATA_PATH --opt o=bind --name $JHDATA
+    echo "Docker volumes created: ${JHDB}"
+    docker volume inspect $JHDB > /dev/null 2>&1 || docker volume create --driver local --opt type=volume --opt device=$JHDB_PATH --opt o=bind --name $JHDB
+    echo "Docker volumes created: ${JHDB}"
+    docker volume inspect $ISISDATA > /dev/null 2>&1 || docker volume create --driver local --opt type=volume --opt device=$ISISDATA_PATH --opt o=bind --name $ISISDATA
+    echo "Docker volumes created: ${ISISDATA}"
+    docker volume inspect $SHARED > /dev/null 2>&1 || docker volume create --driver local --opt type=volume --opt device=$SHARED_PATH --opt o=bind --name $SHARED
+    echo "Docker volumes created: ${SHARED}"
     echo "Building base images"
     sleep 2
     ./scripts/ImageBuilder.sh
     docker-compose --f docker-compose.yml --env-file .env build
   else
-    ./scripts/ImageBuilder_standalone.sh
+    ./scripts/ImageBuilder.sh
 fi
