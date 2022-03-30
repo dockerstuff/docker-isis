@@ -1,5 +1,8 @@
 # Docker JupyterHub + DockerSpawner with GitHub/GitLab OAuth + USGS ISISv5-ASP3+JupyterLab
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.6396321.svg)](https://doi.org/10.5281/zenodo.6396321)
+
+_________________________________________________________________________________________
 This repository contain all the configuration files to build and deploy a containerized JupyterHub wich deploy singleuser USGS ISIS5-ASP3-GISPY + JupyterLab instances in separate containers using DockerSpawner authenticated with GitHub or GitLab OAuth and allowed users configuration file.
 
 Derived from [jupyterhub/jupyterhub-deploy-docker](https://github.com/jupyterhub/jupyterhub-deploy-docker) and [docker-isis](https://github.com/europlanet-gmap/docker-isis3), [docker-gispy](https://github.com/europlanet-gmap/docker-gispy) and [docker-jupyterhub](https://github.com/europlanet-gmap/docker-jupyterhub)
