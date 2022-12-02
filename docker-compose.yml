@@ -53,19 +53,14 @@ services:
       jupyterhub -f /srv/jupyterhub/jupyterhub_config.py
 volumes:
   data:
-    external:
       name: ${HUB_DATA_VOL}
   db:
-    external:
       name: ${HUB_DB_VOL}
   isis-data:
-    external:
       name: ${ISIS_DATA_VOL}
   preset-notebooks:
-    external:
       name: ${PRESET_NB_DATA_VOL}
 
 networks:
   default:
-    external:
       name: ${DOCKER_NETWORK_NAME}

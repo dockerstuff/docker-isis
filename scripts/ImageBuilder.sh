@@ -33,29 +33,38 @@ do
   esac
 done
 
-ASP_VERSION='3.0.0'
-ISIS_VERSION='5'
+ASP_VERSION='3.1.0'
+ISIS_VERSION='7.0.0'
 GDAL_VERSION='3.4.1'
 JUPYTER_ENABLE_LAB='yes'
-DOCKERFILE=isis5-asp3.dockerfile
+DOCKERFILE=isis-asp3.dockerfile
 GISPY_DOCKERFILE=gispy.dockerfile
 
 BASE_IMAGE="condaforge/mambaforge"
-ISIS_IMAGE="isis5-asp3:base"
+ISIS_IMAGE="isis-asp3:base"
 
 echo "ISIS version $ISIS_VERSION will be installed"
 echo "NASA_Ames Stereo Pipeline 3.0.0 will be installed"
 echo "Jupyter + GIS-python install: $jupyter"
 
+_USER="$(id -u -n)"
+_UID="$(id -u)"
+_GID="$(id -g)"
+
+
   if [[ $jupyter =~ ^[Yy1]$ ]]
     then
-      BASE_IMAGE="jupyter/base-notebook:lab-3.2.8"
+	  echo "building"
+      BASE_IMAGE="jupyter/base-notebook:latest"
       JUPYTER_GISPY_IMAGE="jupyter-gispy:gdal"
       docker build -t "$JUPYTER_GISPY_IMAGE"               \
               --build-arg BASE_IMAGE="$BASE_IMAGE"        \
+              --build-arg NB_USER="$_USER" \
+              --build-arg NB_UID="$_UID" \
+              --build-arg NB_GID="$_GID" \              
               -f $PWD/dockerfiles/$GISPY_DOCKERFILE .
       BASE_IMAGE=$JUPYTER_GISPY_IMAGE
-      ISIS_IMAGE="isis5-asp3-gispy:lab"
+      ISIS_IMAGE="isis-asp3-gispy:lab"
     else
       JUPYTER_ENABLE_LAB='no'
   fi
@@ -65,5 +74,8 @@ echo "Jupyter + GIS-python install: $jupyter"
           --build-arg BASE_IMAGE="$BASE_IMAGE"               \
           --build-arg ISIS_VERSION="$ISIS_VERSION"           \
           --build-arg ASP_VERSION="$ASP_VERSION"             \
+		  --build-arg _USER="$_USER" \
+		  --build-arg _UID="$_UID" \
+		  --build-arg _GID="$_GID" \
           -f $PWD/dockerfiles/$DOCKERFILE .
   [ $? ] && echo "Docker image $ISIS_IMAGE built."

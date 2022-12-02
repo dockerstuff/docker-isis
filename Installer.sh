@@ -63,7 +63,8 @@ if [[ $jhub =~ ^[Yy1]$ ]]
     echo "Building base images"
     sleep 2
     ./scripts/ImageBuilder.sh
-    docker-compose --f docker-compose.yml --env-file .env build
+    docker-compose -f docker-compose.yml --env-file .env build
+    #docker-compose -f docker-compose.yml --env-file .env up
 
   else
     ./scripts/ImageBuilder.sh
