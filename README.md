@@ -5,7 +5,6 @@ This branch contain
 ## Requirements
 
 * docker
-* GitHub/GitLab app for authentication see [Here](https://docs.github.com/en/developers/apps/building-github-apps/creating-a-github-app)
 * ISIS-DATA folder (for v4+) - local or shared folder (e.g. nfs) see [Here](https://github.com/USGS-Astrogeology/ISIS3)
 
 This image is a combined build of:
