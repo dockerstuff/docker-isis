@@ -74,8 +74,5 @@ _GID="$(id -g)"
           --build-arg BASE_IMAGE="$BASE_IMAGE"               \
           --build-arg ISIS_VERSION="$ISIS_VERSION"           \
           --build-arg ASP_VERSION="$ASP_VERSION"             \
-		  --build-arg USER="$_USER" \
-		  --build-arg UID="$_UID" \
-		  --build-arg GID="$_GID" \
           -f $PWD/dockerfiles/$DOCKERFILE .
   [ $? ] && echo "Docker image $ISIS_IMAGE built."
