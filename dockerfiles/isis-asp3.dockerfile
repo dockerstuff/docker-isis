@@ -36,7 +36,7 @@ RUN DEBIAN_FRONTEND=noninteractive        																		&& \
 
 ARG ASP_VERSION="3.1.0"
 ARG ASP_TAR="StereoPipeline-${ASP_VERSION}-2022-05-18-x86_64-Linux.tar.bz2"
-ARG ISIS_VERSION="7.0.0"
+ARG ISIS_VERSION="7.1.0"
 ARG CONDA_DIR='/opt/conda'
 
 RUN set -x && \
