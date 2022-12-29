@@ -46,7 +46,8 @@ RUN set -x && \
     source activate isis 																						&& \
     conda config --append channels usgs-astrogeology     														&& \
     conda config --append channels default                														&& \    
-    mamba install -n isis -c usgs-astrogeology isis=$ISIS_VERSION 												&& \    
+    mamba install -n isis -c usgs-astrogeology isis=$ISIS_VERSION 												   \
+											   rclone															&& \
     wget "https://github.com/NeoGeographyToolkit/StereoPipeline/releases/download/${ASP_VERSION}/${ASP_TAR}"  	&& \
     mkdir /opt/ASP	 																							&& \
     tar -xvf StereoPipeline-${ASP_VERSION}-2022-05-18-x86_64-Linux.tar.bz2 --strip 1 -C /opt/ASP 				&& \
