@@ -32,6 +32,7 @@ RUN	mamba install -c conda-forge 				\
 				geoviews 						\
 				holoviews 						\
 				hvplot 							\
+				ipywidgets						\
 				kalasiris 						\
 				matplotlib 						\
 				owslib 							\
@@ -43,7 +44,8 @@ RUN	mamba install -c conda-forge 				\
 				scikit-image					\
 				scipy 							\
 				shapely 						\
-				spectral					 && \
+				spectral					 	\
+				tqdm						 && \
 	conda clean -a							 && \
 	pip install asap_stereo					 	\
 	pds4-tools									\
