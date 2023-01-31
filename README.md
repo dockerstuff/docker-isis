@@ -7,6 +7,10 @@ This repository contain all the configuration files to build and deploy a contai
 
 Derived from [jupyterhub/jupyterhub-deploy-docker](https://github.com/jupyterhub/jupyterhub-deploy-docker) and [docker-isis](https://github.com/europlanet-gmap/docker-isis3), [docker-gispy](https://github.com/europlanet-gmap/docker-gispy) and [docker-jupyterhub](https://github.com/europlanet-gmap/docker-jupyterhub)
 
+## Standalone images
+
+> If you are interested in the (Docker) containers only (not the JupyterHub setup), visit the `standalone` branch:
+> - https://github.com/europlanet-gmap/docker-isis3/tree/standalone
 
 ## Structure
 
