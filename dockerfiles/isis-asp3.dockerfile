@@ -36,8 +36,8 @@ RUN DEBIAN_FRONTEND=noninteractive        																		&& \
 
 ARG ASP_VERSION="3.1.0"
 
-#ARG ASP_TAR="StereoPipeline-${ASP_VERSION}-2022-05-18-x86_64-Linux.tar.bz2"
-ARG ASP_TAR="StereoPipeline-3.2.1-alpha-2023-01-11-x86_64-Linux.tar.bz2"
+ARG ASP_TAR="StereoPipeline-${ASP_VERSION}-2023-01-01-x86_64-Linux.tar.bz2"
+#ARG ASP_TAR="StereoPipeline-3.2.1-alpha-2023-01-11-x86_64-Linux.tar.bz2"
 ARG ISIS_VERSION="7.1.0"
 ARG CONDA_DIR='/opt/conda'
 
@@ -50,8 +50,8 @@ RUN set -x && \
     conda config --append channels default                														&& \    
     mamba install -n isis -c usgs-astrogeology isis=$ISIS_VERSION 												   \
 											   rclone															&& \
-    #######wget "https://github.com/NeoGeographyToolkit/StereoPipeline/releases/download/${ASP_VERSION}/${ASP_TAR}"  	&& \ 
-    wget "https://github.com/NeoGeographyToolkit/StereoPipeline/releases/download/2023-01-11-daily-build/StereoPipeline-3.2.1-alpha-2023-01-11-x86_64-Linux.tar.bz2" && \
+    wget "https://github.com/NeoGeographyToolkit/StereoPipeline/releases/download/${ASP_VERSION}/${ASP_TAR}"  	&& \ 
+    ###wget "https://github.com/NeoGeographyToolkit/StereoPipeline/releases/download/2023-01-11-daily-build/StereoPipeline-3.2.1-alpha-2023-01-11-x86_64-Linux.tar.bz2" && \
     mkdir /opt/ASP	 																							&& \
     tar -xvf $ASP_TAR --strip 1 -C /opt/ASP 				&& \
     rm -rf $ASP_TAR 																							&& \

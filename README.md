@@ -9,8 +9,8 @@ This branch contain
 
 This image is a combined build of:
 
-* USGS ISIS v7.0.0
-* NASA AMES Stereo Pipeline (ASP) v3.1.0
+* USGS ISIS v7.2.0
+* NASA AMES Stereo Pipeline (ASP) v3.2.0
 * jupyter-stack/base-notebook  
 * GISPY image containing several common used python package for processing planetary images and GIS data (e.g. rasterio, spectral, fiona, shapely) and various utilities (e.g. numpy, matoplotlib, pandas, scikit-image, etc)
 

@@ -33,8 +33,8 @@ do
   esac
 done
 
-ASP_VERSION='3.1.0'
-ISIS_VERSION='7.1.0'
+ASP_VERSION='3.2.0'
+ISIS_VERSION='7.2.0'
 GDAL_VERSION='3.4.1'
 JUPYTER_ENABLE_LAB='yes'
 DOCKERFILE=isis-asp3.dockerfile
