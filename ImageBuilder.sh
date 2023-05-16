@@ -34,7 +34,7 @@ do
 done
 
 ASP_VERSION='3.2.0'
-ISIS_VERSION='7.2.0'
+ISIS_VERSION='7.1.0'
 GDAL_VERSION='3.4.1'
 JUPYTER_ENABLE_LAB='yes'
 DOCKERFILE=isis-asp3.dockerfile
@@ -65,7 +65,9 @@ _GID="$(id -g)"
               -f $PWD/dockerfiles/$GISPY_DOCKERFILE .
       BASE_IMAGE=$JUPYTER_GISPY_IMAGE
       ISIS_IMAGE="isis-asp3-gispy:lab"
+      WPATH=/home/jovyan/
     else
+      WPATH=/work
       JUPYTER_ENABLE_LAB='no'
   fi
 
@@ -74,5 +76,6 @@ _GID="$(id -g)"
           --build-arg BASE_IMAGE="$BASE_IMAGE"               \
           --build-arg ISIS_VERSION="$ISIS_VERSION"           \
           --build-arg ASP_VERSION="$ASP_VERSION"             \
+          --build-arg WORKPATH="$WPATH" \
           -f $PWD/dockerfiles/$DOCKERFILE .
   [ $? ] && echo "Docker image $ISIS_IMAGE built."

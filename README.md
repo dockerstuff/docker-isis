@@ -34,9 +34,16 @@ ISIS-DATA must be mounted to **/isis/data**
 ### Install 
 
 #### Pull from docker-hub 
+**With jupyterlab environment**
 ```
-docker pull hyradus/isis-asp-gispy:latest
+docker pull hyradus/isis-asp-gispy:standalone-lab
 ```
+
+**Without jupyterlab environment**
+```
+docker pull hyradus/isis-asp-gispy:standalone-native
+```
+
 #### Build the image from scratch
 
 1) Clone [this](https://github.com/europlanet-gmap/docker-isis3.git) repository and enter the main folder
@@ -56,13 +63,13 @@ chmod +x script/ImageBuilder.sh
 #### Run the container
 * dockerhub 
 ```
-docker run -it --rm -e NB_UID=$UID -e NB_GID=$UID -e CHOWN_HOME=yes -e CHOWN_HOME_OPTS='-R' --user root -v path-to-data-folder:/home/Data -v path-to-isis-data-folder:/isis/data -p 8888:8888 hyradus/isis-asp3-gispy:latest
+docker run -it --rm -e NB_UID=$UID -e NB_GID=$UID -e CHOWN_HOME=yes -e CHOWN_HOME_OPTS='-R' --user root -v path-to-data-folder:/home/Data -v path-to-isis-data-folder:/isis/data -p 8888:8888 hyradus/isis-asp3-gispy:standalone-lab
 
 ```
 
 * built from scratch 
 ```
-docker run -it --rm -e NB_UID=$UID -e NB_GID=$UID -e CHOWN_HOME=yes -e CHOWN_HOME_OPTS='-R' --user root -v path-to-data-folder:/home/Data -v path-to-isis-data-folder:/isis/data -p 8888:8888 isis-asp3-gispy:lab
+docker run -it --rm -e NB_UID=$UID -e NB_GID=$UID -e CHOWN_HOME=yes -e CHOWN_HOME_OPTS='-R' --user root -v path-to-data-folder:/home/Data -v path-to-isis-data-folder:/isis/data -p 8888:8888 isis-asp3-gispy:standalone-lab
 ```
 Mount a host-folder to the container
 

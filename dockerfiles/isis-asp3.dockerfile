@@ -1,6 +1,6 @@
 ARG BASE_IMAGE=condaforge/mambaforge
 
-FROM $BASE_IMAGE
+FROM $BASE_IMAGE AS BASE
 
 MAINTAINER "Giacomo Nodjoumi <giacomo.nodjoumi@hyranet.info>"
 
@@ -8,12 +8,6 @@ ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
 
 USER root
 
-ARG ISISDATA=/isis/data
-ARG ISISTESTDATA=/isis/testdata
-
-RUN mkdir -p $ISISDATA && \
-    mkdir -p $ISISTESTDATA
-    
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 ENV PATH="${CONDA_DIR}/bin:${PATH}"
 
@@ -31,43 +25,46 @@ RUN DEBIAN_FRONTEND=noninteractive        																		&& \
           rsync           						\
           wget            						\
           vim             																						&& \
-    rm -rf /var/lib/apt/lists/*
+    rm -rf /var/lib/apt/lists/*                                                                                 && \
+    apt-get clean
 
-
-ARG ASP_VERSION="3.1.0"
-
-ARG ASP_TAR="StereoPipeline-${ASP_VERSION}-2023-01-01-x86_64-Linux.tar.bz2"
-#ARG ASP_TAR="StereoPipeline-3.2.1-alpha-2023-01-11-x86_64-Linux.tar.bz2"
 ARG ISIS_VERSION="7.1.0"
-ARG CONDA_DIR='/opt/conda'
+ARG ASP_VERSION="3.2.0"
+FROM base AS ISIS
 
 RUN set -x && \
     conda update --all -y && \
     echo 'eval "$(command conda shell.bash hook 2> /dev/null)"' >> /etc/skel/.bashrc 							&& \
-    conda create -n isis -c conda-forge -y python=3.9 															&& \
-    source activate isis 																						&& \
-    conda config --append channels usgs-astrogeology     														&& \
-    conda config --append channels default                														&& \    
-    mamba install -n isis -c usgs-astrogeology isis=$ISIS_VERSION 												   \
-											   rclone															&& \
-    wget "https://github.com/NeoGeographyToolkit/StereoPipeline/releases/download/${ASP_VERSION}/${ASP_TAR}"  	&& \ 
-    ###wget "https://github.com/NeoGeographyToolkit/StereoPipeline/releases/download/2023-01-11-daily-build/StereoPipeline-3.2.1-alpha-2023-01-11-x86_64-Linux.tar.bz2" && \
-    mkdir /opt/ASP	 																							&& \
-    tar -xvf $ASP_TAR --strip 1 -C /opt/ASP 				&& \
-    rm -rf $ASP_TAR 																							&& \
-    chmod -R 755 /opt/ASP/ 																						&& \
-    conda clean -a																								    
+    conda create -n isisasp -c conda-forge -y python=3.9 															&& \
+    source activate isisasp 																						&& \
+    conda config --env --add channels conda-forge                                                               && \
+    conda config --env --add channels usgs-astrogeology                                                         && \
+    conda config --env --add channels nasa-ames-stereo-pipeline                                                 && \
+    conda install stereo-pipeline==3.2.0                                                                        && \
+    mamba install -n isisasp -c usgs-astrogeology isis=$ISIS_VERSION 												\
+											   rclone		                                                    && \
+    conda clean -a                                                                                              && \
+    pip install ipykernel                                                                                       && \
+    python -m ipykernel install --user --name 'ISIS-ASP'                                                            
 
+ARG ISISDATA=/isis/data
+ARG ISISTESTDATA=/isis/testdata
 
-	
-RUN source activate isis && \ 
-	python /opt/conda/envs/isis/scripts/isisVarInit.py \
+RUN mkdir -p $ISISDATA && \
+    mkdir -p $ISISTESTDATA
+    
+RUN source activate isisasp && \ 
+	python /opt/conda/envs/isisasp/scripts/isisVarInit.py \
     --data-dir=$ISISDATA  \
     --test-dir=$ISISTESTDATA 
-												
-RUN echo "export PATH=${PATH}:/opt/ASP/bin" >> ~/.bashrc													&& \
-	echo "source activate isis" >> ~/.bashrc && \ 
-	chmod -R 755 /lib/ && \
-	source ~/.bashrc
 
+ARG WORKPATH=/work
+RUN mkdir -p $WORKPATH && \
+    chmod -R 777 $WORKPATH
 
+RUN echo "export PATH=${PATH}:/opt/conda/envs/isisasp/bin" >> ~/.bashrc                                     && \                                    
+    echo "export ISISROOT=/opt/conda/envs/isisasp" >> ~/.bashrc                                             && \   
+    echo "source activate isisasp" >> ~/.bashrc                                                             && \
+    source ~/.bashrc
+
+WORKDIR $WORKPATH
