@@ -55,4 +55,6 @@ RUN	mamba install -c conda-forge 				\
 	rio-cogeo									\
 	https://github.com/chbrandt/gpt/archive/refs/tags/v0.3dev.zip  
 
+ENV USE_PYGEOS=0
+
 # COPY etc/jupyterlab/user_settings.json /opt/conda/share/jupyter/lab/settings/overrides.json
