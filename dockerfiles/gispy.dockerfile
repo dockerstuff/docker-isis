@@ -1,30 +1,27 @@
-ARG BASE_IMAGE=jupyter/base-notebook:latest
-FROM $BASE_IMAGE as base
+ARG BASE_IMAGE="jupyter/minimal-notebook:latest"
+FROM $BASE_IMAGE
 
 ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
-ENV TZ=Europe/Rome
-ENV DEBIAN_FRONTEND='noninteractive'
-
-MAINTAINER "Giacomo Nodjoumi <giacomo.nodjoumi@hyranet.info>"
 
 USER root
+RUN apt-get update  -y                  && \
+    apt-get install -y libgl1-mesa-glx  \
+                        libjpeg9        \
+                        libjpeg9-dev    && \
+    apt-get install -y python3-pip      \
+                        build-essential \
+                        curl            \
+                        sudo            \
+                        tzdata          \
+                        git-core        \
+                        # libproj-dev     \
+                        # libgeos-dev     \
+                        vim             && \
+    rm -rf /var/lib/apt/lists/*         && \
+    apt-get clean                       && \
+    apt-get autoremove -y
+USER $NB_UID
 
-RUN apt-get update				&& \
-    apt-get upgrade -y 			&& \
-    apt-get install --no-install-recommends -y	\
-				build-essential					\
-				curl 							\
-				git-core 						\
-				python3-pip 					\
-				sudo 							\
-				tzdata							\
-				vim							 && \	
-    rm -rf /var/lib/apt/lists/* 	 		 && \
-    apt-get clean
-
-
-USER $NB_USER
-    
 RUN	mamba install -c conda-forge 				\
 				fiona 							\
 				geopandas 						\
@@ -52,5 +49,4 @@ RUN	mamba install -c conda-forge 				\
 	rio-cogeo									\
 	https://github.com/chbrandt/gpt/archive/refs/tags/v0.3dev.zip  
 
-WORKDIR $HOME/
-ENV JUPYTER_ENABLE_LAB='yes'
+COPY etc/jupyterlab/user_settings.json /opt/conda/share/jupyter/lab/settings/overrides.json
