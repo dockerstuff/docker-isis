@@ -1,0 +1,7 @@
+name: isis
+channels:
+  - usgs-astrogeology
+  - conda-forge
+  - default
+dependencies:
+  - isis
