@@ -1,50 +1,80 @@
 # Docker-ISIS
 
-Docker container images for planetary data analysis. The original goal of this
-repository was/is to define a docker container with USGS/ISIS toolkit pre-set.
+Docker container images for planetary data analysis. 
+This repository defines a docker container with USGS/ISIS toolkit pre-set.
 So planetary data provided by NASA's Planetary Data System (PDS) could/can be
 processed anywhere with Docker installed.
 
-The "ISIS" container is defined in 
-[`dockerfiles/isis.dockerfile`](`dockerfiles/isis.dockerfile`):
-Notice that other images are defined in [`dockerfiles/`](dockerfiles/):
+Around the ISIS image there is "Gispy" and "ISIS-ASP". The former is an
+image with GIS Python packages to provide a modern data analysis environment
+based on Jupyter Notebooks. Per default, Gispy is based on `jupyter/scipy-notebook`.
+The latter, ISIS-ASP, extends "ISIS" with Ames Stereo Pipeline.
+Finally, the ISIS image is an extention of Gispy, with the USGS/ISIS installed.
 
-- `isis`: Jupyter-Lab server with USGS/ISIS install
-- `isis-asp`: Extension of `isis` with AMES Stereo Pipeline installed 
+Images tree:
+
+    ---------     --------     ------------
+    | gispy | --> | isis | --> | isis-asp |
+    ---------     --------     ------------
+
+
+The "ISIS" container is defined in 
+[`dockerfiles/isis.dockerfile`](`dockerfiles/isis.dockerfile`),
+next to the other images (in [`dockerfiles/`](dockerfiles/)):
+
 - `gispy`: Jupyter-Lab for Python Geographical (GIS) data analysis
+- `isis`: Jupyter-Lab server with USGS/ISIS install (based in `gispy`)
+- `isis-asp`: Extension of `isis` with AMES Stereo Pipeline installed 
 
 The corresponding images can be downloaded from GMAP repository in DockerHub:
 
+- `gmap/jupyter-gispy`: latest build of `gispy.dockerfile`
 - `gmap/jupyter-isis`: latest build of `isis.dockerfile`
 - `gmap/jupyter-isis-asp`: latest build of `isis-asp.dockerfile`
-- `gmap/jupyter-gispy`: latest build of `gispy.dockerfile`
 
 If you want to *build* your own images, check 
-[the README in `dockerfiles/`](dockerfiles/README.md).
+the *readme* in `dockerfiles/`](dockerfiles/README.md).
 
 ToC:
 
-1. [#how-to-use](#how-to-use)
-2. [#contents](#contents)
+1. [How to use](#how-to-use)
+2. [Contents](#contents)
+
 
 ## How to use
 
-See [*requirements* section](#requirements) if it's your first time here.
+> If it's your first time here, you may want to check the 
+[*requirements* section](#requirements) first.
 
-Running the container is a two-steps process (`pull` and `run`):
+Running the container is a two-steps process:
 
+- *Pull* (or *download*) the image:
 ```bash
-# Get image from GMAP' DockerHub repository
 docker pull gmap/jupyter-isis
 ```
-This downloads (*pulls*) the "isis" image from the repository.
 
+
+- And *run* it. Pay attention to the `--port` argument:
 ```bash
-# And then run it, sharing port '8888' to access the Jupyter Notebook
-docker run --rm --name isis_container --port 8888:8888 gmap/jupyter-isis
+docker run --rm --port 8888:8888 gmap/jupyter-isis
 ```
-At this point, the containter (`isis_container`) is running and Jupyter-Lab
+
+> The `--port` argument is necessary because the interface we are going to 
+> use -- Jupyter-Lab -- is accessible through our host's port `8888`.
+>
+> The other argument, `--rm` is responsible for automatic remove of of
+> the container when you finish using it. 
+
+At this point, "Jupyter-ISIS" containter is running and Jupyter-Lab
 should be available at `http://localhost:8888`.
+You can copy-and-paste this URL in a new web-browser windows and the
+the login page of a Jupyter-Lab instance.
+
+There are two ways you can authenticate and login a Jupyter-Lab instance
+like this one: (1) the default one where you get the random *token* (*ie*, password)
+Jupyter generated for you, or (2) you define the password beforehand.
+
+### Get *token* from terminal
 
 If you go straight to [http://localhost:8888](http://localhost:8888) you'll
 notice a *passphrase* or *token* is required. 
@@ -60,9 +90,23 @@ you should see something *like*:
 ```
 The value of `token` is unique to each (run) session, you can copy-and-paste
 the token string (eg, `19aa3371154d1a74d726c2b422fd134ac881827b44e69d40`)
-in the authentication page at `localhost:8888`, or simply copy and paste the
-whole "`127.0.0.1`" URL in your browser directly, it will then authenticate
-automatically.
+in the authentication page at `localhost:8888`.
+
+### Define *password* beforehand
+
+When instanciating the container (*ie*, when `docker-run` is executed)
+you can define an environment variables in `gmap/jupyter-isis`.
+The variable responsible for Jupyter-Lab password is `JUPYTER_TOKEN`,
+the value you define for this variable will be the login password.
+
+For example,
+```bash
+docker run --name isis_tmp --port 8888:8888 -e JUPYTER_TOKEN='bla' gmap/jupyter-isis
+```
+will define `bla` as password for this (`isis_tmp`) container.
+You can now go to `http://localhost:8888` and type `bla` in the corresponding
+field there.
+You should then be redirected to a Jupyter-Lab workspace.
 
 ### Requirements
 
