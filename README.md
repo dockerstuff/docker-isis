@@ -35,7 +35,7 @@ The corresponding images can be downloaded from GMAP repository in DockerHub:
 If you want to *build* your own images, check 
 the *readme* in `dockerfiles/`](dockerfiles/README.md).
 
-ToC:
+Summary:
 
 1. [Requirements](#requirements)
 1. [How to use](#how-to-use)
@@ -78,36 +78,16 @@ go through.
 > If you are familiar with Docker and Jupyter and ISIS, you can skip to
 > sub-section [Command-line summary](#command-line-summary)
 
+Subsections:
+
 - [Run Docker container, the basics](#run-docker-container-the-basics)
 - [Accessing Jupyter-Lab](#accessing-jupyter-lab)
     * [Get *token* from terminal](#get-token-from-terminal)
     * [Define *password* beforehand](#define-password-beforehand)
-- [Process local data]
-- [Mount ISISDATA]
+- [Accessing host data](#accessing-host-data)
+    * [Mount ISISDATA](#mount-isisdata)
+- [Advanced use]
 
-### Accessing Host system data
-
-Docker containers run in an isolated environment, meaning it is not possible
-to access the contents of the host system unless explicitly required.
-For example, if you want to access the content of directory `/data` from 
-inside the (jupyter-isis) container, you must "say" so when *instantiating*
-the container (*ie*, when `docker run`*ning*).
-
-This process is called *volume binding* (in Docker jargon); "volume" is a 
-synonym for "directory", and "binding" is a synonym for "sharing" or "mounting".
-
-In practice, to *share* a directory from your computer (*eg*, `/data`)
-with the (jupyter-isis) container, you will use `docker run` option `-v`:
-
-```bash
-docker run --rm -v "/data:/mnt/data" gmap/jupyter-isis
-```
-
-In the command above we *bound* host's `/data` directory to 
-container's `/mnt/data` directory through option `-v` (*volume*)
-
-
-### Mount ISISDATA
 
 ### Run Docker container, the basics
 
@@ -186,17 +166,70 @@ field there.
 You should then be redirected to a Jupyter-Lab workspace.
 
 
-## Contents
+### Accessing host data
+
+Docker containers run in an isolated environment, meaning it is not possible
+to access the contents of the host system unless explicitly required.
+For example, if you want to access the content of directory `/data` from 
+inside the (jupyter-isis) container, you must "say" so when *instantiating*
+the container (*ie*, when `docker run`*ning*).
+
+In practice, to *share* a directory from your computer (*eg*, `/data`)
+with the (jupyter-isis) container, you will use `docker run` option `-v`:
 
 ```bash
-$ docker run -it --rm --name isis3 \
-    -v "/path/to/isis3data":"/isis/data" \
-    my_isis3_container
+docker run  -v "/data:/mnt/data" \
+            -p 8888:8888 gmap/jupyter-isis
 ```
 
-* USGS ISIS v7.2.0
+In the command above we *bound* host's `/data` directory to 
+container's `/mnt/data` directory through option `-v` (*volume*)
+
+You can mount as many volumes (*ie*, directories) as you want.
+For example, suppose we want to analyse some data from Mars, and for that
+we are going to use raster and vector datasets from two diferent directories,
+'`/data/raster/mars`' and '`/data/vector/mars`'.
+
+We can share *both* directories with the container.
+In this case, we can bind `/data/{raster,vector}/mars` directories to 
+container's `/mnt/data/mars/{raster,vector}` paths:
+
+```bash
+docker run  -v /data/raster/mars:/mnt/data/mars/raster \
+            -v /data/vector/mars:/mnt/data/mars/vector \
+            -p 8888:8888 gmap/jupyter-isis
+```
+
+Now, from inside the container, if you inspect the content of those
+directories, `/mnt/data/*`, you should see the very same content of the
+respective ones in the host system (`/data/*`).
+
+
+### Mount ISISDATA
+
+`ISISDATA` is a directory you will give to `jupyter-isis` everytime you
+run it if you want to make use of the ISIS tools.
+
+The ISIS tools inside jupyter-isis expect ISISDATA to be provided at
+'`/isis/data`'
+
+Suppose I download ISIS Data into my system's `/path/to/isisdata` directory.
+I'd run jupyter-isis as follows:
+
+```bash
+docker run  -v /path/to/isisdata:/isis/data \
+            -p 8888:8888 gmap/jupyter-isis
+```
+
+Inside the container, you should see the content of ISISDATA inside
+`/isis/data`.
+
+
+## Contents
+
+* USGS ISIS v7.1.0
 * NASA AMES Stereo Pipeline (ASP) v3.2.0
-* jupyter-stack/base-notebook  
+* jupyter-stack/scipy-notebook  
 * GISPY image containing several common used python package for processing planetary images and GIS data (e.g. rasterio, spectral, fiona, shapely) and various utilities (e.g. numpy, matoplotlib, pandas, scikit-image, etc)
 
 Then ISIS v7 can be used in jupyterlab terminal or jupyter noteboo through [kalasiris](https://github.com/rbeyer/kalasiris) package by adding in the first cell of the notebook the following code:
@@ -208,56 +241,8 @@ import kalasiris as isis
 ```
 For an example notebook see [PyISIS-Parallel](https://github.com/Hyradus/PyISIS-Parallel/tree/main/PyISIS-Parallel)
 
-## ISIS-DATA
-
-ISIS-DATA must be mounted to **/isis/data** 
-
-## Persistent Data
-
-## How-To
-
-```bash
-$ docker run -it --rm --name isis3_jupyter \
-    -p 8888:8888 \
-    -v "$PWD":"/mnt/data" \
-    -v "/path/to/isis3data":"/isis/data" \
-    my_isis3_container:jupyterhub
-```
-
-**Without jupyterlab environment**
-```
-docker pull hyradus/isis-asp-gispy:standalone-native
-```
-
-#### Build the image from scratch
-
-1) Clone [this](https://github.com/europlanet-gmap/docker-isis3.git) repository and enter the main folder
-2) Switch to standalone branch
-```
-git checkout standalone
-```
-4) Make the main scripts executable
-```
-chmod +x script/ImageBuilder.sh
-```
-4) Run the installer
-```
-./ImageBuilder.sh
-```
-
-#### Run the container
-* dockerhub 
-```
-docker run -it --rm -e NB_UID=$UID -e NB_GID=$UID -e CHOWN_HOME=yes -e CHOWN_HOME_OPTS='-R' --user root -v path-to-data-folder:/home/Data -v path-to-isis-data-folder:/isis/data -p 8888:8888 hyradus/isis-asp3-gispy:standalone-lab
-
-```
-
-* built from scratch 
-```
-docker run -it --rm -e NB_UID=$UID -e NB_GID=$UID -e CHOWN_HOME=yes -e CHOWN_HOME_OPTS='-R' --user root -v path-to-data-folder:/home/Data -v path-to-isis-data-folder:/isis/data -p 8888:8888 isis-asp3-gispy:standalone-lab
-```
-Mount a host-folder to the container
-
-## TO-DO
 _____________________
-This study is within the Europlanet 2024 RI and EXPLORE project, and it has received funding from the European Union’s Horizon 2020 research and innovation programme under grant agreement No 871149 and No 101004214.
+*This work is supported the Europlanet 2024 RI and EXPLORE project, 
+it has received funding from the European Union’s Horizon 2020 
+Research and Innovation programme under grant agreement 
+No 871149 and No 101004214.*
