@@ -1,37 +1,37 @@
-ARG BASE_IMAGE=condaforge/mambaforge
-FROM $BASE_IMAGE as base
+ARG BASE_IMAGE="jupyter/scipy-notebook:latest"
+FROM $BASE_IMAGE
+
+# ARG JUPYTERHUB_VERSION="3.0.0"
+# RUN python -m pip install --no-cache jupyterhub==$JUPYTERHUB_VERSION
+
+# This lines above are necessary to guarantee a smooth coupling JupyterHub.
+# -------------------------------------------------------------------------
 
 ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
-ENV TZ=Europe/Rome
-ENV DEBIAN_FRONTEND='noninteractive'
-MAINTAINER "Giacomo Nodjoumi <giacomo.nodjoumi@hyranet.info>"
+
 USER root
-RUN apt-get update && \
-    apt-get upgrade -y \
-    && apt-get install --no-install-recommends -y \
-                          build-essential \
-                          curl \
-                          git-core \
-			                    python3-pip \
-                          sudo \
-                          tzdata \
-                          vim \
-    && rm -rf /var/lib/apt/lists/* \
-    && apt-get clean \
-    && mamba install -c conda-forge \
-                          fiona \
-                          geopandas \
-                          geoplot \
-                          holoviews \
-                          hvplot \
-                          kalasiris \
-                          matplotlib \
-                          numpy \
-                          plotly \
-                          pygeos \
-                          rasterio \
-                          rioxarray \
-                          scikit-image \
-                          scipy \
-                          shapely \
-                          spectral
+RUN apt-get update -y                           && \
+    apt-get install -y --no-install-recommends  \
+        bzip2                                   \
+        ca-certificates                         \
+        curl                                    \
+        git                                     \
+        libgl1-mesa-glx                         \
+        libjpeg9                                \
+        libjpeg9-dev                            \
+        rsync                                   \
+        wget                                    \
+        vim                                     && \
+    rm -rf /var/lib/apt/lists/*                 && \
+    apt-get autoremove
+USER $NB_UID
+
+COPY gispy.txt /tmp/gispy.txt 
+RUN mamba install -y --file /tmp/gispy.txt      && \
+    mamba clean -a
+ENV USE_PYGEOS=0
+
+# Install jupyter-cache in the base environment
+RUN python -m pip install jupyter-cache
+
+# COPY etc/jupyterlab/user_settings.json /opt/conda/share/jupyter/lab/settings/overrides.json

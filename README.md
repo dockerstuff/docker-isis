@@ -1,128 +1,248 @@
-# Docker JupyterHub + DockerSpawner with GitHub/GitLab OAuth + USGS ISISv5-ASP3+JupyterLab
+# Docker-ISIS
 
-This repository contain all the configuration files to build and deploy a containerized JupyterHub wich deploy singleuser USGS ISIS5-ASP3-GISPY + JupyterLab instances in separate containers using DockerSpawner authenticated with GitHub or GitLab OAuth and allowed users configuration file.
+Docker container images for planetary data analysis. 
+This repository defines a docker container with USGS/ISIS toolkit pre-set.
+So planetary data provided by NASA's Planetary Data System (PDS) could/can be
+processed anywhere with Docker installed.
 
-Derived from [jupyterhub/jupyterhub-deploy-docker](https://github.com/jupyterhub/jupyterhub-deploy-docker) and [docker-isis](https://github.com/europlanet-gmap/docker-isis3), [docker-gispy](https://github.com/europlanet-gmap/docker-gispy) and [docker-jupyterhub](https://github.com/europlanet-gmap/docker-jupyterhub)
+Around the ISIS image there is "Gispy" and "ISIS-ASP". The former is an
+image with GIS Python packages to provide a modern data analysis environment
+based on Jupyter Notebooks. Per default, Gispy is based on `jupyter/scipy-notebook`.
+The latter, ISIS-ASP, extends "ISIS" with Ames Stereo Pipeline.
+Finally, the ISIS image is an extention of Gispy, with the USGS/ISIS installed.
+
+Images tree:
+
+    ---------     --------     ------------
+    | gispy | --> | isis | --> | isis-asp |
+    ---------     --------     ------------
 
 
-## Structure
+The "ISIS" container is defined in 
+[`dockerfiles/isis.dockerfile`](`dockerfiles/isis.dockerfile`),
+next to the other images (in [`dockerfiles/`](dockerfiles/)):
 
-<img src="ReadmeImages/scheme.png?raw=true" alt="Test Example"
-	title="Test Example" width="1000"/>
+- `gispy`: Jupyter-Lab for Python Geographical (GIS) data analysis
+- `isis`: Jupyter-Lab server with USGS/ISIS install (based in `gispy`)
+- `isis-asp`: Extension of `isis` with AMES Stereo Pipeline installed 
+
+The corresponding images can be downloaded from GMAP repository in DockerHub:
+
+- `gmap/jupyter-gispy`: latest build of `gispy.dockerfile`
+- `gmap/jupyter-isis`: latest build of `isis.dockerfile`
+- `gmap/jupyter-isis-asp`: latest build of `isis-asp.dockerfile`
+
+If you want to *build* your own images, check 
+the *readme* in `dockerfiles/`](dockerfiles/README.md).
+
+Summary:
+
+1. [Requirements](#requirements)
+1. [How to use](#how-to-use)
+2. [Contents](#contents)
+
 
 ## Requirements
 
-* docker
-* GitHub/GitLab app for authentication see [Here](https://docs.github.com/en/developers/apps/building-github-apps/creating-a-github-app)
-* ISIS-DATA folder (for v4+) - local or shared folder (e.g. nfs) see [Here](https://github.com/USGS-Astrogeology/ISIS3)
+### Docker
 
-## How-To
+Docker ([Engine or Desktop](https://www.docker.com/products/docker-desktop/alternatives/))
+is all you need to run or build these images.
+See the following Docker documents for instructions on how to obtain it
+and how it works:
 
-1) Clone this repository and enter the main folder
-2) EDIT env_example and rename as .env )
+* https://docs.docker.com/get-docker
+* https://www.docker.com/get-started
 
 
-*Basic .env variables*
-```
-### JupyterHUB variables
+### ISIS-Data
 
-## Docker network
-NETWORK='jupyterhub-network'
+If using ISIS tools, you'll probably need "`ISISDATA`" (the space-planetary 
+missions and instruments support data). ISIS-Data is NOT included in the 
+container(s).
 
-## Volumes Names
-JHDATA='jupyterhub-data'
-JHDB='jupyterhub-sqldata'
-ISISDATA='isis-data'
-SHARED='shared-data'
+For instructions on obtaining ISIS-Data, see the official docs at:
 
-## Volumes Paths
-JHDATA_PATH='/mnt/DATS-EXT4/docker-vols/hub-data-vol'
-JHDB_PATH='/mnt/DATS-EXT4/docker-vols/hub-db-vol'
-ISISDATA_PATH='/mnt/NAS/OrbitalData/ISIS-DATA/'
-SHARED_PATH='/mnt/DATS-EXT4/docker-vols/preset-data-vol'
+* https://github.com/DOI-USGS/ISIS3/blob/dev/README.md#The-ISIS-Data-Area
 
-## Image for docker-spawner (Image to be used for each user)
-NOTEBOOK_IMAGE=isis5-asp3-gispy:lab
+In the next section you'll learn how to use it.
 
-## JupyterHUB access port
-NOTEBOOK_PORT=9988
 
-## JupyterHUB database
-# Name, user and pwd of JupyterHub postgres database
-DB_VOLUME_HOST=jupyterhub-db-data
-POSTGRES_DB=jupyterhub
-POSTGRES_PASSWORD=jupysqlpswd!
+## How to use
 
-## OAuthentication configuration
-GITHUB_CLIENT_ID=0180328a17738c6ed04c
-GITHUB_CLIENT_SECRET=5ab0622ec5eeddfdf2f7ace14e38284d015d11f3
-GITHUB_CALLBACK_URL=http://localhost:9988/hub/oauth_callback
-```
-3) create *userlist* file list containing only the authorized github/gitlab usernames and admin flag.
+This section is somewhat long because we go through the various options you
+have when running these images, in particular `jupyter-isis`.
+We assume no particular knowledge with `docker`, hence the many steps we'll
+go through.
 
-E.g. *userlist* file containing:
-```
-Giacomo
-Chtulhu admin
-```
-4) Make the main scripts executable
-```
-chmod +x script/ImageBuilder.sh
+> If you are familiar with Docker and Jupyter and ISIS, you can skip to
+> sub-section [Command-line summary](#command-line-summary)
 
-chmod +x Installer.sh
-```
-5) Run the installer
-```
-./Installer.sh
+Subsections:
+
+- [Run Docker container, the basics](#run-docker-container-the-basics)
+- [Accessing Jupyter-Lab](#accessing-jupyter-lab)
+    * [Get *token* from terminal](#get-token-from-terminal)
+    * [Define *password* beforehand](#define-password-beforehand)
+- [Accessing host data](#accessing-host-data)
+    * [Mount ISISDATA](#mount-isisdata)
+- [Advanced use]
+
+
+### Run Docker container, the basics
+
+> The instruction below assume the use of a terminal (cli), if you are not
+> used to command-line interfaces, don't worry, you can achieve the same
+> through the graphical interface provided by Docker Desktop.
+
+Running the (jupyter-isis) container is a two-steps process:
+
+- *Pull* (or *download*) the (jupyter-isis) image:
+```bash
+docker pull gmap/jupyter-isis
 ```
 
-**NOTE** It is possible to create a standalone isis5-asp3-gispy+jupyterlab image by passing options -JH N or -jh n to the installer.
+
+- And *run* it. Pay attention to the `--port` argument:
+```bash
+docker run --rm --port 8888:8888 gmap/jupyter-isis
 ```
-./Installer -jh n
+
+> The `--port` argument is necessary because the interface we are going to 
+> use -- Jupyter-Lab -- is accessible through our host's port `8888`.
+>
+> The other argument, `--rm` is responsible for automatic remove of of
+> the container when you finish using it. 
+
+
+### Accessing Jupyter-Lab
+
+"Jupyter-ISIS" containter is running, and an instance of Jupyter-Lab
+should be available at [http://localhost:8888](http://localhost:8888).
+If you go there (in your browser), you should see a login page, where a 
+passphrase (password, token) is requested.
+
+There are two ways you can authenticate and login into a Jupyter-Lab instance:
+
+1. (default) you get the *token* generated by Jupyter, from the terminal;
+2. you define the password beforehand, when you `run` the container.
+
+
+#### Get *token* from terminal
+
+If you go straight to [http://localhost:8888](http://localhost:8888) you'll
+notice a *passphrase* or *token* is required. 
+Such information you find in the output from the latest command, `docker-run`,
+you should see something *like*:
+
+```
+    To access the server, open this file in a browser:
+        file:///home/jovyan/.local/share/jupyter/runtime/jpserver-7-open.html
+    Or copy and paste one of these URLs:
+        http://51476fe2885f:8888/lab?token=19aa3371154d1a74d726c2b422fd134ac881827b44e69d40
+        http://127.0.0.1:8888/lab?token=19aa3371154d1a74d726c2b422fd134ac881827b44e69d40
+```
+The value of `token` is unique to each (run) session, you can copy-and-paste
+the token string (eg, `19aa3371154d1a74d726c2b422fd134ac881827b44e69d40`)
+in the authentication page at `localhost:8888`.
+
+
+#### Define *password* beforehand
+
+When instanciating the container (*ie*, when `docker-run` is executed)
+you can define an environment variables in `gmap/jupyter-isis`.
+The variable responsible for Jupyter-Lab password is `JUPYTER_TOKEN`,
+the value you define for this variable will be the login password.
+
+For example,
+
+```bash
+docker run --name isis_tmp --port 8888:8888 -e JUPYTER_TOKEN='bla' gmap/jupyter-isis
 ```
 
-## Installer details
+will define `bla` as password for this (`isis_tmp`) container.
+You can now go to `http://localhost:8888` and type `bla` in the corresponding
+field there.
+You should then be redirected to a Jupyter-Lab workspace.
 
-The installer scripts take care of everything!
 
-* check if DOCKER_NETWORK_NAME exists and create it binding HUB_DATA_VOL_PATH if missing
-* check if HUB_DATA_VOL exists and create it if missing
-* check if HUB_DB_VOL exists and create it binding HUB_DB_VOL_PATH if missing
-* check if ISIS_DATA_VOL exists and create it binding ISIS_DATA_PATH if missing
-* build the isis5asp3-gispy:lab image
+### Accessing host data
 
-## isis5asp3-gispy:lab image
+Docker containers run in an isolated environment, meaning it is not possible
+to access the contents of the host system unless explicitly required.
+For example, if you want to access the content of directory `/data` from 
+inside the (jupyter-isis) container, you must "say" so when *instantiating*
+the container (*ie*, when `docker run`*ning*).
 
-This image is a combined build of:
+In practice, to *share* a directory from your computer (*eg*, `/data`)
+with the (jupyter-isis) container, you will use `docker run` option `-v`:
 
-* USGS ISIS v5
-* NASA AMES Stereo Pipeline (ASP) v3
-* jupyter-stack/base-notebook  
+```bash
+docker run  -v "/data:/mnt/data" \
+            -p 8888:8888 gmap/jupyter-isis
+```
+
+In the command above we *bound* host's `/data` directory to 
+container's `/mnt/data` directory through option `-v` (*volume*)
+
+You can mount as many volumes (*ie*, directories) as you want.
+For example, suppose we want to analyse some data from Mars, and for that
+we are going to use raster and vector datasets from two diferent directories,
+'`/data/raster/mars`' and '`/data/vector/mars`'.
+
+We can share *both* directories with the container.
+In this case, we can bind `/data/{raster,vector}/mars` directories to 
+container's `/mnt/data/mars/{raster,vector}` paths:
+
+```bash
+docker run  -v /data/raster/mars:/mnt/data/mars/raster \
+            -v /data/vector/mars:/mnt/data/mars/vector \
+            -p 8888:8888 gmap/jupyter-isis
+```
+
+Now, from inside the container, if you inspect the content of those
+directories, `/mnt/data/*`, you should see the very same content of the
+respective ones in the host system (`/data/*`).
+
+
+### Mount ISISDATA
+
+`ISISDATA` is a directory you will give to `jupyter-isis` everytime you
+run it if you want to make use of the ISIS tools.
+
+The ISIS tools inside jupyter-isis expect ISISDATA to be provided at
+'`/isis/data`'
+
+Suppose I download ISIS Data into my system's `/path/to/isisdata` directory.
+I'd run jupyter-isis as follows:
+
+```bash
+docker run  -v /path/to/isisdata:/isis/data \
+            -p 8888:8888 gmap/jupyter-isis
+```
+
+Inside the container, you should see the content of ISISDATA inside
+`/isis/data`.
+
+
+## Contents
+
+* USGS ISIS v7.1.0
+* NASA AMES Stereo Pipeline (ASP) v3.2.0
+* jupyter-stack/scipy-notebook  
 * GISPY image containing several common used python package for processing planetary images and GIS data (e.g. rasterio, spectral, fiona, shapely) and various utilities (e.g. numpy, matoplotlib, pandas, scikit-image, etc)
 
-Then ISIS v5 can be used in jupyterlab terminal or jupyter noteboo through [kalasiris](https://github.com/rbeyer/kalasiris) package by adding in the first cell of the notebook the following code:
+Then ISIS v7 can be used in jupyterlab terminal or jupyter noteboo through [kalasiris](https://github.com/rbeyer/kalasiris) package by adding in the first cell of the notebook the following code:
 ```
 import os
 os.environ["ISISROOT"]="/opt/conda/envs/isis/"
 os.environ["ISISDATA"]="/isis/data"
 import kalasiris as isis
 ```
-
 For an example notebook see [PyISIS-Parallel](https://github.com/Hyradus/PyISIS-Parallel/tree/main/PyISIS-Parallel)
 
-## ISIS-DATA
-
-ISIS-DATA is mounted to the JupyterHub container and to each spawned container.
-
-## Persistent Data
-
-All data is persistent using docker volumes.
-
-# TO-DO
-
-* [ ] Multi user test during processing
-* [ ] Add concurrent OAuth
-* [ ] Add configuration for spawned container resource limits
-* [ ] Switch to kubernetes
-* [ ] Integrate with portainer
-* [ ] Integrate with Guacamole
+_____________________
+*This work is supported the Europlanet 2024 RI and EXPLORE project, 
+it has received funding from the European Union’s Horizon 2020 
+Research and Innovation programme under grant agreement 
+No 871149 and No 101004214.*
