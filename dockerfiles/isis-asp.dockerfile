@@ -24,7 +24,7 @@ USER $NB_UID
 
 ARG ASP_VERSION=""
 
-COPY asp.txt /tmp/asp.tmp
+COPY isis-asp.txt /tmp/asp.tmp
 
 RUN [ -n "${ASP_VERSION}" ]                                             && \
     sed "s/\(.*stereo-pipeline\).*/\1=$ASP_VERSION/" /tmp/asp.tmp       \

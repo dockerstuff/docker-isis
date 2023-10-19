@@ -18,7 +18,7 @@ services:
         ISIS_VERSION: $ISIS_VERSION
     image: $ISIS_NEW_IMAGE
   
-  asp:
+  isis-asp:
     build:
       context: dockerfiles/.
       dockerfile: isis-asp.dockerfile
