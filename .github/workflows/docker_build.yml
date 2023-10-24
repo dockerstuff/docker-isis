@@ -126,7 +126,7 @@ jobs:
 
       -
         name: env-tags
-        run: echo ${{ DOCKER_METADATA_OUTPUT_TAGS }}
+        run: echo $DOCKER_METADATA_OUTPUT_TAGS
 
 
 
