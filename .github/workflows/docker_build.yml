@@ -19,10 +19,12 @@ on:
   # Runs when pushing to 'stable' branch
   push:
     branches:
-      - 'stable'
-      - 'test'
+      # - 'stable'
+      # - 'test'
+    branches-ignore:
+      - 'master'
     tags:
-      - 'v*'
+      # - 'v*'
 
   # Run in every PR too
   pull_request:
@@ -45,6 +47,14 @@ jobs:
     uses: ./.github/workflows/workflow_build.yml
     with:
       image_name: ${{ vars.DOCKERHUB_USERNAME }}/jupyter-isis
+      context_path: ./dockerfiles
+      dockerfile_path: ./dockerfiles/isis.dockerfile
+    secrets: inherit
+
+  isis-asp:
+    uses: ./.github/workflows/workflow_build.yml
+    with:
+      image_name: ${{ vars.DOCKERHUB_USERNAME }}/jupyter-isis-asp
       context_path: ./dockerfiles
       dockerfile_path: ./dockerfiles/isis.dockerfile
     secrets: inherit
