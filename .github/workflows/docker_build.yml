@@ -128,6 +128,13 @@ jobs:
         name: env-tags
         run: echo $DOCKER_METADATA_OUTPUT_TAGS
 
+      -
+        name: env-tag-0
+        run: echo ${DOCKER_METADATA_OUTPUT_TAGS[0]}
+
+      -
+        name: env-tag-0
+        run: echo ${DOCKER_METADATA_OUTPUT_TAGS[1]}
 
 
   # isis-asp:
