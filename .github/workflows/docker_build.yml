@@ -109,8 +109,25 @@ jobs:
       #     path: /tmp/isis_image.tar
 
       -
-        name: Build ISIS+ASP
+        name: tags
         run: echo ${{ steps.meta.outputs.tags }}
+
+      -
+        name: tag-0
+        run: echo ${{ steps.meta.outputs.tags[0] }}
+
+      -
+        name: tag-first
+        run: echo ${{ steps.meta.outputs.tags.first }}
+
+      -
+        name: env
+        run: echo ${{ env }}
+
+      -
+        name: env-tags
+        run: echo ${{ DOCKER_METADATA_OUTPUT_TAGS }}
+
 
 
   # isis-asp:
