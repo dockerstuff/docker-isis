@@ -20,7 +20,7 @@ services:
       - gispy 
     image: $ISIS_NEW_IMAGE
   
-  asp:
+  isis-asp:
     build:
       context: dockerfiles/.
       dockerfile: isis-asp.dockerfile
