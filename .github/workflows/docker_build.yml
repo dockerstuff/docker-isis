@@ -24,7 +24,7 @@ on:
     branches-ignore:
       - 'master'
     tags:
-      # - 'v*'
+      - '*'
 
   # Run in every PR too
   pull_request:
