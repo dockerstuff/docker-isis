@@ -19,10 +19,12 @@ on:
   # Runs when pushing to 'stable' branch
   push:
     branches:
-      - 'stable'
-      - 'test'
+      # - 'stable'
+      # - 'test'
+    branches-ignore:
+      - 'master'
     tags:
-      - 'v*'
+      # - 'v*'
 
   # Run in every PR too
   pull_request:
@@ -32,45 +34,27 @@ on:
 
 
 jobs:
-  docker:
-    runs-on: ubuntu-latest
-    steps:
-      - # https://github.com/marketplace/actions/checkout
-        name: Checkout
-        uses: actions/checkout@v4
-      - # https://github.com/marketplace/actions/docker-metadata-action
-        name: Docker meta
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          # list of Docker images to use as base name for tags
-          images: |
-            ${{ vars.DOCKERHUB_USERNAME }}/jupyter-gispy
-          # generate Docker tags based on the following events/attributes
-          tags: |
-            type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'stable') }}
-            type=ref,event=branch,enable=${{ github.ref == format('refs/heads/{0}', 'test') }}
-            type=ref,event=tag
-            type=sha
-      - # https://github.com/marketplace/actions/docker-setup-qemu
-        name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
-      - # https://github.com/marketplace/actions/docker-setup-buildx
-        name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-      - # https://github.com/marketplace/actions/docker-login
-        name: Login to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - # https://github.com/marketplace/actions/build-and-push-docker-images
-        name: Build and push
-        uses: docker/build-push-action@v5
-        with:
-          context: ./dockerfiles
-          file: ./dockerfiles/gispy.dockerfile
-          # push: true
-          push: ${{ github.event_name == 'push' }}
-          # tags: user/app:latest
-          tags: ${{ steps.meta.outputs.tags }}
+
+  # gispy:
+  #   uses: ./.github/workflows/workflow_build.yml
+  #   with:
+  #     image_name: ${{ vars.DOCKERHUB_USERNAME }}/jupyter-gispy
+  #     context_path: ./dockerfiles
+  #     dockerfile_path: ./dockerfiles/gispy.dockerfile
+  #   secrets: inherit
+
+  isis:
+    uses: ./.github/workflows/workflow_build.yml
+    with:
+      image_name: ${{ vars.DOCKERHUB_USERNAME }}/jupyter-isis
+      context_path: ./dockerfiles
+      dockerfile_path: ./dockerfiles/isis.dockerfile
+    secrets: inherit
+
+  isis-asp:
+    uses: ./.github/workflows/workflow_build.yml
+    with:
+      image_name: ${{ vars.DOCKERHUB_USERNAME }}/jupyter-isis-asp
+      context_path: ./dockerfiles
+      dockerfile_path: ./dockerfiles/isis.dockerfile
+    secrets: inherit
