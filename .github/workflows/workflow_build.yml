@@ -40,7 +40,7 @@ jobs:
             type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'stable') }}
             type=ref,event=branch,enable=${{ github.ref == format('refs/heads/{0}', 'test') }}
             type=ref,event=tag
-            type=sha
+          # type=sha
       - # https://github.com/marketplace/actions/docker-setup-qemu
         name: Set up QEMU
         uses: docker/setup-qemu-action@v3
