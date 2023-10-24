@@ -1,4 +1,4 @@
-ARG BASE_IMAGE="jupyter/scipy-notebook:latest"
+ARG BASE_IMAGE="jupyter/minimal-notebook:latest"
 FROM $BASE_IMAGE
 
 # ARG JUPYTERHUB_VERSION="3.0.0"

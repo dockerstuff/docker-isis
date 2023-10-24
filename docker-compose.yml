@@ -16,6 +16,8 @@ services:
       args:
         BASE_IMAGE: $ISIS_BASE_IMAGE
         ISIS_VERSION: $ISIS_VERSION
+    depends_on:
+      - gispy 
     image: $ISIS_NEW_IMAGE
   
   isis-asp:
@@ -25,4 +27,6 @@ services:
       args:
         BASE_IMAGE: ${ASP_BASE_IMAGE}
         ASP_VERSION: $ASP_VERSION
+    depends_on:
+      - isis
     image: $ASP_NEW_IMAGE
