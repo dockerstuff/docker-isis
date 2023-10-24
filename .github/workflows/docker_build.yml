@@ -18,9 +18,9 @@ name: Build and Publish Containers
 on:
   # Runs when pushing to 'stable' branch
   push:
-    branches:
-      # - 'stable'
-      # - 'test'
+    # branches:
+    #   - 'stable'
+    #   - 'test'
     branches-ignore:
       - 'master'
     tags:
@@ -133,7 +133,7 @@ jobs:
         run: echo ${DOCKER_METADATA_OUTPUT_TAGS[0]}
 
       -
-        name: env-tag-0
+        name: env-tag-1
         run: echo ${DOCKER_METADATA_OUTPUT_TAGS[1]}
 
 
