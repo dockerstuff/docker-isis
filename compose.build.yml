@@ -1,0 +1,36 @@
+version: "3.8"
+services:
+
+  jupyter-gispy:
+    extends:
+      file: compose.base.yml
+      service: jupyter-gispy
+    build:
+      context: dockerfiles/.
+      dockerfile: gispy.dockerfile
+      args:
+        BASE_IMAGE: ${GISPY_BASE_IMAGE:-'jupyter/minimal-notebook'}
+
+  jupyter-isis:
+    extends:
+      file: compose.base.yml
+      service: jupyter-isis
+    build:
+      context: dockerfiles/.
+      dockerfile: isis.dockerfile
+      args:
+        BASE_IMAGE: ${ISIS_BASE_IMAGE:-'jupyter/minimal-notebook'}
+        ISIS_VERSION: $ISIS_VERSION
+
+  jupyter-isis-asp:
+    extends:
+      file: compose.base.yml
+      service: jupyter-isis-asp
+    build:
+      context: dockerfiles/.
+      dockerfile: isis-asp.dockerfile
+      args:
+        BASE_IMAGE: $ISIS_IMAGE
+        ASP_VERSION: $ASP_VERSION
+    depends_on:
+      - jupyter-isis
