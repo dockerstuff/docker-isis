@@ -75,7 +75,8 @@ ENV README=$HOME/README.md
 COPY readmes/readme.base.md /tmp/readme.base.md
 COPY readmes/readme.gispy.md /tmp/readme.gispy.md
 
-RUN cat /tmp/readme.base.md | envsubst              >> $README  && \
+RUN cat /tmp/readme.base.md | envsubst              > $README  && \
+    echo ""                                         >> $README  &&\
     cat /tmp/readme.gispy.md | envsubst             >> $README  && \
     echo ""                                         >> $README  &&\
     echo "Python/Conda packages installed by *us*:" >> $README  && \

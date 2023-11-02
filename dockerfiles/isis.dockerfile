@@ -16,6 +16,7 @@ RUN apt-get update -y                           && \
         bzip2                                   \
         ca-certificates                         \
         curl                                    \
+        gettext                                 \
         git                                     \
         libgl1-mesa-glx                         \
         libjpeg9                                \
@@ -94,41 +95,17 @@ ENV ISISROOT="/opt/conda/envs/isis"
 RUN echo 'source activate isis' >> ~/.bashrc                        && \
     echo 'export PATH="${HOME}/.local/bin:${PATH}"' >> ~/.bashrc
 
-# RUN DOC="${HOME}/README.md" && \
-#     source activate isis                                                && \
-#     GDAL_VERSION=$(gdalinfo --version | cut -d, -f1 | cut -f2 -d' ')    && \
-#     source deactivate                                                   &&\
-#     echo '# Planeraty data science environment'                                     > $DOC  && \
-#     echo '' >> $DOC                                 && \
-#     echo 'This is a typical JupyterLab setup based on [jupyter/docker-stacks][],'   >> $DOC && \
-#     echo 'with some customizations tailored for geo-planetary data scientists.'     >> $DOC && \
-#     echo '' >> $DOC                                 && \
-#     echo '[jupyter/docker-stacks]: https://github.com/jupyter/docker-stacks'        >> $DOC && \
-#     echo '' >> $DOC                                 && \
-#     echo 'If you are looking for ISIS/ASP tools, you will find them'                  >> $DOC && \
-#     echo 'in the `isis` *Conda* environment, or `ISIS` Jupyter *launcher*.'         >> $DOC && \
-#     echo 'The versions installed are the following:'                                >> $DOC && \
-#     echo '' >> $DOC                                 && \
-#     echo "- ISIS version: ${ISIS_VERSION}"                                          >> $DOC && \
-#     echo "- ASP version: ${ASP_VERSION}"                                            >> $DOC && \
-#     echo "- GDAL version: ${GDAL_VERSION}"                                          >> $DOC && \
-#     echo '' >> $DOC                                 && \
-#     echo 'If you have any questions or are experience some problem,'                >> $DOC && \
-#     echo 'check our documentation at:'                                              >> $DOC && \
-#     echo '' >> $DOC                                 && \
-#     echo '- `https://github.com/europlanet-gmap/docker-isis3`'                      >> $DOC && \
-#     echo '' >> $DOC                                 && \
-#     echo 'There, you will find either the answer to your issue'                     >> $DOC && \
-#     echo 'or instructions on how to ask for help.'                                  >> $DOC && \
-#     echo 'As well as instructions on how to request new features ;)'                >> $DOC && \
-#     echo '' >> $DOC                                 && \
-#     echo '-----'                                                                    >> $DOC && \
-#     echo "> This container is based on '${BASE_IMAGE}' ([jupyter/docker-stacks][])" >> $DOC
+## Write a README file for user
+#
+ENV README=$HOME/README.md
 
-# COPY gispy.txt /tmp/gispy.txt
-# RUN mamba install -y --file /tmp/gispy.txt     && \
-#     mamba clean -a
-# ENV USE_PYGEOS=0
+COPY readmes/readme.base.md /tmp/readme.base.md
+COPY readmes/readme.isis.md /tmp/readme.isis.md
+
+RUN cat /tmp/readme.base.md | envsubst              > $README  && \
+    echo ""                                         >> $README  &&\
+    cat /tmp/readme.isis.md | envsubst              >> $README  && \
+    echo ""                                         >> $README
 
 # # # If WORK_DIR is not defined (when notebook/user is started), use (~) Home.
 # # RUN echo 'conda config --add envs_dirs ${WORK_DIR:-~}/.conda/envs 2> /dev/null' \

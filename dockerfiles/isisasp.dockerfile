@@ -42,15 +42,15 @@ RUN source activate isis                    && \
     mamba install --file /tmp/asp.txt       && \
     conda clean -a
 
-RUN DOC="${HOME}/README.md"                                     && \
-    echo '# AMES Stereo Pipeline'                       >> $DOC && \
-    echo ''                                             >> $DOC && \
-    echo 'The version installed:'                       >> $DOC && \
-    echo ''                                             >> $DOC && \
-    echo "- ASP version: ${ASP_VERSION}"                >> $DOC && \
-    echo ''                                             >> $DOC && \
-    echo '-----'                                        >> $DOC && \
-    echo "> This container is based on '${BASE_IMAGE}'" >> $DOC
+## Write a README file for user
+#
+ENV README=$HOME/README.md
+
+COPY readmes/readme.isisasp.md /tmp/readme.isisasp.md
+
+RUN echo ""                                         >> $README  && \
+    cat /tmp/readme.isisasp.md | envsubst           >> $README  && \
+    echo ""                                         >> $README
 
 # RUN source activate gispy                     && \
 # 	pip install -y                              \
