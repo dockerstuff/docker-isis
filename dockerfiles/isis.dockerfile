@@ -45,7 +45,7 @@ RUN mamba env create --name isis --file /tmp/isis.yml   && \
 # - https://github.com/conda/conda/issues/13276
 # In the meantime, we force/add those channels by hand here.
 RUN source activate isis                                        && \
-    conda config --env --append channels default                && \
+    conda config --env --append channels defaults               && \
     conda config --env --prepend channels usgs-astrogeology
 
 # Stack 'base' on top of 'isis' to get its PATH.
@@ -69,7 +69,7 @@ RUN echo 'source activate isis' >> ~/.bashrc                        && \
     echo 'export PATH="${HOME}/.local/bin:${PATH}"' >> ~/.bashrc
 
 RUN conda config --set always_yes true                          && \
-    conda config --set use_only_tar_bz2 true                    && \
+    conda config --set use_only_tar_bz2 false                    && \
     conda config --set notify_outdated_conda false              && \
     #
     ## conda-update may not be necessary, and can mess up things.
