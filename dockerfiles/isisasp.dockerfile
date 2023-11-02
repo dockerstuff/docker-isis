@@ -1,5 +1,12 @@
-ARG BASE_IMAGE="gmap/jupyter-isis:latest"
+ARG BASE_IMAGE="jupyter/minimal-notebook:latest"
 FROM $BASE_IMAGE
+
+# ARG JUPYTERHUB_VERSION="3.0.0"
+# RUN python -m pip install --no-cache jupyterhub==$JUPYTERHUB_VERSION    && \
+#     echo "jupyterhub $(jupyterhub --version)" >> $CONDA_DIR/conda-meta/pinned
+
+# This lines above are necessary to guarantee a smooth coupling JupyterHub.
+# -------------------------------------------------------------------------
 
 ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
 
@@ -34,9 +41,6 @@ RUN [ -n "${ASP_VERSION}" ]                                             && \
 RUN source activate isis                    && \
     mamba install --file /tmp/asp.txt       && \
     conda clean -a
-
-# RUN source activate isis                                    && \
-#     python -m ipykernel install --user --name 'ISIS-ASP'
 
 RUN DOC="${HOME}/README.md"                                     && \
     echo '# AMES Stereo Pipeline'                       >> $DOC && \

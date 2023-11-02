@@ -1,6 +1,12 @@
 ## GISPy
 
 Besides the packages already provided by this container's base image,
-we added a few more we fill useful for most of GIS work in Python:
+we added a few more we fill useful for most of GIS work in Python.
 
-$(conda env export --no-builds | grep --file /tmp/gispy.txt --word-regexp)
+For a complete listing of the packages installed in the (default) `base`
+environment, open a terminal and ask Conda to export `base` profile:
+
+`(Launcher's page) > Other > Terminal`:
+```bash
+(base) jovyan:~$ conda env export --from-history
+```

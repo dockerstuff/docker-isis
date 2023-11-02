@@ -1,4 +1,4 @@
-ARG BASE_IMAGE="jupyter/scipy-notebook:latest"
+ARG BASE_IMAGE="jupyter/minimal-notebook:latest"
 FROM $BASE_IMAGE
 
 # ARG JUPYTERHUB_VERSION="3.0.0"
@@ -27,6 +27,27 @@ RUN apt-get update -y                           && \
     apt-get autoremove
 USER $NB_UID
 
+RUN conda config --set always_yes true                          && \
+    conda config --set use_only_tar_bz2 false                    && \
+    conda config --set notify_outdated_conda false              && \
+    #
+    ## conda-update may not be necessary, and can mess up things.
+    ## for instance, https://github.com/conda/conda/issues/10887,
+    ## guarantee 'pip' will be there after updating.
+    # conda update conda                                          && \
+    # conda install pip                                           && \
+    #
+    ## "nb-conda-kernels" doesn't seem to work (as I expected).
+    ## There is a discussion about managing kernels/nb_conda_kernels
+    ## in: https://github.com/jupyter-server/jupyter_server/pull/112.
+    ## In short, nb_conda_kernels used to work well, but is outdated.
+    # conda install nb_conda_kernels                              && \
+    #
+    conda config --add create_default_packages ipykernel        && \
+    conda config --add create_default_packages pip              && \
+    conda config --add create_default_packages sh               && \
+    conda clean -a
+
 ARG ISIS_VERSION=""
 
 COPY isis.yml /tmp/isis.tmp
@@ -54,8 +75,13 @@ RUN source activate isis                                        && \
     source activate --stack base                                && \
     python -m ipykernel install --user --env PATH $PATH
 
-# RUN source activate isis                                    && \
-#     python -m ipykernel install --user --name 'ISIS'
+# Although providing an ipykernel for 'isis' environment is not
+# very useful (since ISIS is about command-line tools) and may
+# cause confusion to less geek users, it may be of particular use
+# to some advanced ones calling shell from python.
+# So...let's define an ISIS kernel
+RUN source activate isis                                    && \
+    python -m ipykernel install --user --name 'ISIS'
 
 ARG ISISDATA="/isis/data"
 ARG ISISTESTDATA="/isis/testdata"
@@ -67,27 +93,6 @@ ENV ISISROOT="/opt/conda/envs/isis"
 
 RUN echo 'source activate isis' >> ~/.bashrc                        && \
     echo 'export PATH="${HOME}/.local/bin:${PATH}"' >> ~/.bashrc
-
-RUN conda config --set always_yes true                          && \
-    conda config --set use_only_tar_bz2 false                    && \
-    conda config --set notify_outdated_conda false              && \
-    #
-    ## conda-update may not be necessary, and can mess up things.
-    ## for instance, https://github.com/conda/conda/issues/10887,
-    ## guarantee 'pip' will be there after updating.
-    # conda update conda                                          && \
-    # conda install pip                                           && \
-    #
-    ## "nb-conda-kernels" doesn't seem to work (as I expected).
-    ## There is a discussion about managing kernels/nb_conda_kernels
-    ## in: https://github.com/jupyter-server/jupyter_server/pull/112.
-    ## In short, nb_conda_kernels used to work well, but is outdated.
-    # conda install nb_conda_kernels                              && \
-    #
-    conda config --add create_default_packages ipykernel        && \
-    conda config --add create_default_packages pip              && \
-    conda config --add create_default_packages sh               && \
-    conda clean -a
 
 # RUN DOC="${HOME}/README.md" && \
 #     source activate isis                                                && \
