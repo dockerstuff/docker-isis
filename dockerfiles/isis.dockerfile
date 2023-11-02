@@ -38,24 +38,22 @@ RUN [ -n "${ISIS_VERSION}" ]                                                && \
 RUN mamba env create --name isis --file /tmp/isis.yml   && \
     mamba clean -a
 
+# Set channels for isis environment.
+# These channels are the very same ones in 'isis.yml', used to install 'ISIS'
+# in the 'isis' environment, but for some reason those channels are NOT set
+# for the new environment. I think this is a bug a filed an issue in Conda:
+# - https://github.com/conda/conda/issues/13276
+# In the meantime, we force/add those channels by hand here.
+RUN source activate isis                                        && \
+    conda config --env --append channels default                && \
+    conda config --env --prepend channels usgs-astrogeology
+
 # Stack 'base' on top of 'isis' to get its PATH.
 # Then, update the default/base kernel to include PATH from 'isis'
 RUN source activate isis                                        && \
     source activate --stack base                                && \
-    python -m ipykernel install --user --env PATH $PATH 
+    python -m ipykernel install --user --env PATH $PATH
 
-# ARG ASP_VERSION="3.2.0"
-#
-# RUN conda create -n isis python=3.9
-#
-# RUN source activate isis                                            && \
-#     ## Add USGS/AMES channels just for this (isis) environment
-#     conda config --env --prepend channels usgs-astrogeology         && \
-#     mamba install isis=${ISIS_VERSION}                              && \
-#     # conda config --env --prepend channels nasa-ames-stereo-pipeline && \
-#     # mamba install stereo-pipeline=${ASP_VERSION}                    && \
-#     conda clean -a
-#
 # RUN source activate isis                                    && \
 #     python -m ipykernel install --user --name 'ISIS'
 
@@ -93,7 +91,7 @@ RUN conda config --set always_yes true                          && \
 
 # RUN DOC="${HOME}/README.md" && \
 #     source activate isis                                                && \
-#     GDAL_VERSION=$(gdalinfo --version | cut -d, -f1 | cut -f2 -d' ')    && \ 
+#     GDAL_VERSION=$(gdalinfo --version | cut -d, -f1 | cut -f2 -d' ')    && \
 #     source deactivate                                                   &&\
 #     echo '# Planeraty data science environment'                                     > $DOC  && \
 #     echo '' >> $DOC                                 && \
@@ -122,7 +120,7 @@ RUN conda config --set always_yes true                          && \
 #     echo '-----'                                                                    >> $DOC && \
 #     echo "> This container is based on '${BASE_IMAGE}' ([jupyter/docker-stacks][])" >> $DOC
 
-# COPY gispy.txt /tmp/gispy.txt 
+# COPY gispy.txt /tmp/gispy.txt
 # RUN mamba install -y --file /tmp/gispy.txt     && \
 #     mamba clean -a
 # ENV USE_PYGEOS=0

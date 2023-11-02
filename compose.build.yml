@@ -16,6 +16,8 @@ services:
       args:
         BASE_IMAGE: ${ISIS_BASE_IMAGE:-jupyter/minimal-notebook}
         ISIS_VERSION: ${ISIS_VERSION:-7.1.0}
+        ISISDATA: ${ISISDATA:-/isis/data}
+        ISISTESTDATA: ${ISISTESTDATA:-/isis/testdata}
     image: ${ISIS_IMAGE:-my-jupyter-isis}
 
   jupyter-isis-asp:
@@ -23,7 +25,7 @@ services:
       context: dockerfiles/.
       dockerfile: isisasp.dockerfile
       args:
-        BASE_IMAGE: ${ISIS_IMAGE:-jupyter-isis}
+        BASE_IMAGE: ${ISIS_IMAGE:-my-jupyter-isis}
         ASP_VERSION: ${ASP_VERSION:-3.2.0}
     depends_on:
       - jupyter-isis
