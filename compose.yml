@@ -1,0 +1,11 @@
+version: "3.8"
+services:
+
+  jupyter-gispy:
+    image: ${GISPY_IMAGE:-gmap/jupyter-gispy}
+
+  jupyter-isis:
+    image: ${ISIS_IMAGE:-gmap/jupyter-isis}
+
+  jupyter-isis-asp:
+    image: ${ASP_IMAGE:-gmap/jupyter-isis-asp}
