@@ -18,13 +18,13 @@ RUN [ -n "${BASE_IMAGE##*isis*}" ]                  && \
         wget                                        \
         vim                                         && \
     rm -rf /var/lib/apt/lists/*                     && \
-    apt-get autoremove                              || \ 
+    apt-get autoremove                              || \
     echo "Nothing apt-installed, base 'isis' image already did it."
 USER $NB_UID
 
 ARG ASP_VERSION=""
 
-COPY isis-asp.txt /tmp/asp.tmp
+COPY isisasp.txt /tmp/asp.tmp
 
 RUN [ -n "${ASP_VERSION}" ]                                             && \
     sed "s/\(.*stereo-pipeline\).*/\1=$ASP_VERSION/" /tmp/asp.tmp       \
