@@ -114,6 +114,9 @@ jobs:
         name: Checkout
         uses: actions/checkout@v4
 
+      - name: Load .env file
+        uses: xom9ikk/dotenv@v2
+
       - name: Build image
         run: |
           docker compose build ${{ env.SERVICE }}
@@ -129,6 +132,7 @@ jobs:
         run: |
           NEW_IMAGE=`docker compose config --images ${{ env.SERVICE }}`
           docker tag $NEW_IMAGE ${{ env.REPO }}:latest
+          docker tag $NEW_IMAGE ${{ env.REPO }}:${ISIS_VERSION}
         # DATE=`date +%Y%m%d`
         # docker tag $NEW_IMAGE ${{ env.REPO }}:$DATE
 
@@ -164,6 +168,9 @@ jobs:
         name: Checkout
         uses: actions/checkout@v4
 
+      - name: Load .env file
+        uses: xom9ikk/dotenv@v2
+
       - name: Build image
         run: |
           docker compose build ${{ env.SERVICE }}
@@ -179,6 +186,7 @@ jobs:
         run: |
           NEW_IMAGE=`docker compose config --images ${{ env.SERVICE }}`
           docker tag $NEW_IMAGE ${{ env.REPO }}:latest
+          docker tag $NEW_IMAGE ${{ env.REPO }}:${ISIS_VERSION}-${ASP_VERSION}
         # DATE=`date +%Y%m%d`
         # docker tag $NEW_IMAGE ${{ env.REPO }}:$DATE
 
