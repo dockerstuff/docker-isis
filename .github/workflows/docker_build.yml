@@ -65,33 +65,27 @@ jobs:
 
       - name: Build image
         run: |
-          docker compose -f compose.build.yml build ${{ env.SERVICE }}
-
-      - name: List images
-        run: docker image ls -a
+          docker compose build ${{ env.SERVICE }}
 
       - name: Tag image
         if: ${{ github.event_name == 'push' }}
         run: |
-          NEW_IMAGE=`docker compose -f compose.build.yml config --images ${{ env.SERVICE }}`
+          NEW_IMAGE=`docker compose config --images ${{ env.SERVICE }}`
           docker tag $NEW_IMAGE ${{ env.REPO }}:$GITHUB_REF_NAME
 
       - name: Tag 'latest' image
         if: ${{ github.ref_type == 'tag' }}
         run: |
-          NEW_IMAGE=`docker compose -f compose.build.yml config --images ${{ env.SERVICE }}`
-          DATE=`date +%Y%m%d`
+          NEW_IMAGE=`docker compose config --images ${{ env.SERVICE }}`
           docker tag $NEW_IMAGE ${{ env.REPO }}:latest
-          docker tag $NEW_IMAGE ${{ env.REPO }}:$DATE
+        # DATE=`date +%Y%m%d`
+        # docker tag $NEW_IMAGE ${{ env.REPO }}:$DATE
 
       # - name: Tag image with SHA hash
       #   if: ${{ github.event_name == 'push' }}
       #   run: |
       #     IMAGE_SHA=`docker images -q $NEW_IMAGE`
       #     docker tag $NEW_IMAGE ${USERNAME}/jupyter-gispy:$IMAGE_SHA
-
-      - name: List images
-        run: docker image ls -a
 
       - # https://github.com/marketplace/actions/docker-login
         name: Login to Docker Hub
@@ -122,24 +116,21 @@ jobs:
 
       - name: Build image
         run: |
-          docker compose -f compose.build.yml build ${{ env.SERVICE }}
-
-      - name: List images
-        run: docker image ls -a
+          docker compose build ${{ env.SERVICE }}
 
       - name: Tag image
         if: ${{ github.event_name == 'push' }}
         run: |
-          NEW_IMAGE=`docker compose -f compose.build.yml config --images ${{ env.SERVICE }}`
+          NEW_IMAGE=`docker compose config --images ${{ env.SERVICE }}`
           docker tag $NEW_IMAGE ${{ env.REPO }}:$GITHUB_REF_NAME
 
       - name: Tag 'latest' image
         if: ${{ github.ref_type == 'tag' }}
         run: |
-          NEW_IMAGE=`docker compose -f compose.build.yml config --images ${{ env.SERVICE }}`
-          DATE=`date +%Y%m%d`
+          NEW_IMAGE=`docker compose config --images ${{ env.SERVICE }}`
           docker tag $NEW_IMAGE ${{ env.REPO }}:latest
-          docker tag $NEW_IMAGE ${{ env.REPO }}:$DATE
+        # DATE=`date +%Y%m%d`
+        # docker tag $NEW_IMAGE ${{ env.REPO }}:$DATE
 
       # - name: Tag image with SHA hash
       #   if: ${{ github.event_name == 'push' }}
@@ -147,8 +138,55 @@ jobs:
       #     IMAGE_SHA=`docker images -q $NEW_IMAGE`
       #     docker tag $NEW_IMAGE ${USERNAME}/jupyter-gispy:$IMAGE_SHA
 
-      - name: List images
-        run: docker image ls -a
+      - # https://github.com/marketplace/actions/docker-login
+        name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Push image
+        run: >
+          docker image ls
+          | tail -n+2 | awk '{print $1":"$2}'
+          | grep "${{ env.REPO }}"
+          | xargs -I'{}' docker push {}
+
+  isis-asp:
+    runs-on: ubuntu-latest
+    env:
+      USER_ORG: ${{ vars.DOCKERHUB_USERNAME }}
+      SERVICE: jupyter-isis-asp
+      REPO: ${USER_ORG}/${SERVICE}
+
+    steps:
+      - # https://github.com/marketplace/actions/checkout
+        name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build image
+        run: |
+          docker compose build ${{ env.SERVICE }}
+
+      - name: Tag image
+        if: ${{ github.event_name == 'push' }}
+        run: |
+          NEW_IMAGE=`docker compose config --images ${{ env.SERVICE }}`
+          docker tag $NEW_IMAGE ${{ env.REPO }}:$GITHUB_REF_NAME
+
+      - name: Tag 'latest' image
+        if: ${{ github.ref_type == 'tag' }}
+        run: |
+          NEW_IMAGE=`docker compose config --images ${{ env.SERVICE }}`
+          docker tag $NEW_IMAGE ${{ env.REPO }}:latest
+        # DATE=`date +%Y%m%d`
+        # docker tag $NEW_IMAGE ${{ env.REPO }}:$DATE
+
+      # - name: Tag image with SHA hash
+      #   if: ${{ github.event_name == 'push' }}
+      #   run: |
+      #     IMAGE_SHA=`docker images -q $NEW_IMAGE`
+      #     docker tag $NEW_IMAGE ${USERNAME}/jupyter-gispy:$IMAGE_SHA
 
       - # https://github.com/marketplace/actions/docker-login
         name: Login to Docker Hub
