@@ -3,22 +3,20 @@
 Let's go through the structure of files and workflow on building and releasing
 of our (Docker) container images.
 
-- [The images]()
-- [Compose and Env files]()
-- [Dockerfiles and Packages]()
-- [Github Actions and Versions]()
+- [The images](#the-images)
+- [Tags and Versions](#tags-and-versions)
+- [Compose and Env files](#compose-and-env-files)
+- [Dockerfiles and Packages](#dockerfiles-and-packages)
 
-# The images
+## The images
 
 [jupyter/minimal-notebook]: https://jupyter-docker-stacks.readthedocs.io/en/latest/using/selecting.html#jupyter-minimal-notebook
 [jupyter/scipy-notebook]: https://jupyter-docker-stacks.readthedocs.io/en/latest/using/selecting.html#jupyter-scipy-notebook
 
-This repo focuses on setting up/building three images, the so called "gispy",
-"isis", and "isis-asp".
-*All* images are based on [Jupyter Docker Stacks](https://github.com/jupyter/docker-stacks),
-by default, either the [jupyter/minimal-notebook][]
-or [jupyter/scipy-notebook][].
-Although they can be changed as necessary/desired (see following sections).
+This repo provides three images, the so called "gispy", "isis", and "isis-asp".
+All images are based on [Jupyter Docker Stacks](https://github.com/jupyter/docker-stacks);
+by default, [jupyter/minimal-notebook][] and [jupyter/scipy-notebook][].
+They can be changed as necessary/desired (see following sections).
 
 - **Gispy** image is defined in [`gispy.dockerfile`](/dockerfiles/gispy.dockerfile).
   It provide GIS software such as [GDAL](https://gdal.org) and
@@ -32,72 +30,73 @@ Although they can be changed as necessary/desired (see following sections).
 - **Isis-Asp** image is defined in [`isisasp.dockerfile](/dockerfiles/isisasp.dockerfile).
   It installs [NASA' ASP toolkit](https://github.com/NeoGeographyToolkit/StereoPipeline).
 
+
+## Tags and Versions
+
+There is no real meaning in tagging this repository with some [semver](https://semver.org/)
+syntax (eg, `v2` or `v1.3.7`); it can, though. Any tagging of the repository
+will create corresponding (tagged) images and published in DockerHub automatically.
+
+> See document [workflows.md](workflows.md) for details on building/publishing.
+
+It is **recommended** for the tagging of this repository to use a date in the format
+`YYYYMMDD` (year-month-day) or some specific event for which some custom
+image is necessary (eg, `egu`).
 ## Compose and Env files
 
-Docker `compose.yml` file has the receipes to `build` each of the (3) images
+Docker `compose.yml` file has the recipes to `build` each of the (3) images
 with default attributes/variables that can be modified through `.env` file.
 
-Notice that the `compose.yml` and `.env` files are primarily meant for
-templating/simplifying the *build* of image (rather than the *run* of them).
-
+> Notice that the `compose.yml` and `.env` files are primarily meant for
+> templating/simplifying the *build* of image (rather than *running* them).
+>
 > If you had not yet, go there and have a look on [`compose.yml`](/compose.yml)
 > and [`.env`](/.env) files.
 
+In `.env` file we can define any variable used in `compose.yml`, the values
+defined there have precedence over the default/fallback ones from `compose`.
+
+Before you wonder about the utility of the variables in `.env` -- *"they are
+not very useful"*, you may say; and I would agree in principle -- there use
+is just to simplify the building commands and the Github workflow building them.
+
+### ISIS and ASP versions
+
+The versions to install in the images are defined in compose's variables:
+
+- `ISIS_VERSION`
+- `ASP_VERSION`
+
+For instance, when you do `docker compose build jupyter-isis`, the `ISIS_VERSION`
+defined in `.env` will be used. Likewise for ASP when you build `jupyter-isis-asp`.
+
+### Image names
+
+The names of the images used as *base-image* arguments as well as the output
+images are defined in `.env`.
 
 
+### Building
 
-## USGS/ISIS containers
-ISIS containers have ISIS(3) installed as in the official repository,
-https://github.com/USGS-Astrogeology/ISIS3.
-It uses `conda` to have ISIS installed under a (`isis`) named virtual environment.
+As explained above, the use of `.env` is to simplify the building through
+docker-compose. The building should then call for building each service
+individually:
 
-The container (image) is build on top of (some) [osgeo/gdal](https://hub.docker.com/r/osgeo/gdal).
-Typically, the `small` version of the latest tagged version (as of now,
-`osgeo/gdal:ubuntu-small-3.4.0`).
-OSGEO tends to use the latest Ubuntu LTS, currently: `ubuntu:20.04`.
+- Build "gispy":
+    ```bash
+    docker compose build jupyter-gispy
+    ```
 
+- Build "isis":
+    ```bash
+    docker compose build jupyter-isis
+    ```
 
-### ISIS versions
-Specification of ISIS version (3, 4, or 5) is possible during the building
-through `--build-arg ISIS_VERSION=5` (for example, to install the latest).
-The default is `3`.
-See the [Dockerfile](/dockerfile/Dockerfile) for details.
+- Build "isis-asp":
+    ```bash
+    docker compose build jupyter-isis-asp
+    ```
 
+## Dockerfiles and Packages
 
-## Jupyter containers
-Long story short, Jupyter containers have to come from an
-[official Jupyter image](https://hub.docker.com/u/jupyter),
-default is `jupyter/base-notebook`.
-The official containers setup is set properly for
-[JupyterHub spawners](https://jupyterhub.readthedocs.io/en/stable/reference/spawners.html)
-which simplifies a lot the adoption of _DockerSpawner_, for instance.
-
-There is one issue, though: we can only use _one_ base image to our ISIS3
-container, either "gdal" or "jupyter".
-Thankfully, `osgeo/gdal` and `jupyter/*-notebook` are both descendants from
-`ubuntu:20.04` (see [gdal](https://github.com/OSGeo/gdal/blob/master/docker/ubuntu-small/Dockerfile) and [base-notebook](https://github.com/jupyter/docker-stacks/blob/master/base-notebook/Dockerfile)).
-Which allows us to rebuild one of them based on the other.
-It seems better to me to rebuild the Jupyter container from an OSGEO image,
-and then put ISIS on top.
-
-
-### Jupyter-GDAL container
-Basically, what we want to do is in the following branch of [jupyter/docker-stack](
-https://github.com/dockerstuff/docker-stacks/blob/master/base-notebook/build_gdal.sh
-) build script:
-
-```bash
-$ cd docker-stacks/base-notebook
-$ docker build -t jupyter:gdal --build-arg ROOT_CONTAINER='osgeo/gdal:ubuntu-small-3.4.0' .
-```
-
-
-### Jupyter-ISIS container
-Then, we build ISIS container using the just built `jupyter_gdal` as
-`Dockerfile.jupyter` base image:
-
-```bash
-$ cd dockerfile
-$ docker build -t jupyter:isis --build-arg BASE_IMAGE'jupyter:gdal' \
-          -f Dockerfile.jupyter .
-```
+TBD
