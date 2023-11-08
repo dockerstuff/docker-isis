@@ -1,5 +1,49 @@
-# Docker-ISIS3 Developers docs
-Set up, building, deployment of USGS ISIS(3) containers.
+# Developers
+
+Let's go through the structure of files and workflow on building and releasing
+of our (Docker) container images.
+
+- [The images]()
+- [Compose and Env files]()
+- [Dockerfiles and Packages]()
+- [Github Actions and Versions]()
+
+# The images
+
+[jupyter/minimal-notebook]: https://jupyter-docker-stacks.readthedocs.io/en/latest/using/selecting.html#jupyter-minimal-notebook
+[jupyter/scipy-notebook]: https://jupyter-docker-stacks.readthedocs.io/en/latest/using/selecting.html#jupyter-scipy-notebook
+
+This repo focuses on setting up/building three images, the so called "gispy",
+"isis", and "isis-asp".
+*All* images are based on [Jupyter Docker Stacks](https://github.com/jupyter/docker-stacks),
+by default, either the [jupyter/minimal-notebook][]
+or [jupyter/scipy-notebook][].
+Although they can be changed as necessary/desired (see following sections).
+
+- **Gispy** image is defined in [`gispy.dockerfile`](/dockerfiles/gispy.dockerfile).
+  It provide GIS software such as [GDAL](https://gdal.org) and
+  (Python) Cartopy, Geopandas, Shapely, etc. By default, this images is
+  built on top of Jupyter' Scipy image.
+
+- **Isis** image is defined in [`isis.dockerfile`](/dockerfiles/isis.dockerfile).
+  It is built on top of Jupyter' Minimal Docker image and
+  provide [USGS' ISIS toolkit](https://github.com/DOI-USGS/ISIS3).
+
+- **Isis-Asp** image is defined in [`isisasp.dockerfile](/dockerfiles/isisasp.dockerfile).
+  It installs [NASA' ASP toolkit](https://github.com/NeoGeographyToolkit/StereoPipeline).
+
+## Compose and Env files
+
+Docker `compose.yml` file has the receipes to `build` each of the (3) images
+with default attributes/variables that can be modified through `.env` file.
+
+Notice that the `compose.yml` and `.env` files are primarily meant for
+templating/simplifying the *build* of image (rather than the *run* of them).
+
+> If you had not yet, go there and have a look on [`compose.yml`](/compose.yml)
+> and [`.env`](/.env) files.
+
+
 
 
 ## USGS/ISIS containers
