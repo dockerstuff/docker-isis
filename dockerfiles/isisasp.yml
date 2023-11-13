@@ -1,0 +1,8 @@
+name: isis
+channels:
+  - nasa-ames-stereo-pipeline
+  - usgs-astrogeology
+  - conda-forge
+  - default
+dependencies:
+  - stereo-pipeline

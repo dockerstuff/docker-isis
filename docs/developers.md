@@ -3,7 +3,10 @@
 Let's go through the structure of files and workflow on building and releasing
 of our (Docker) container images.
 
+
+
 - [The images](#the-images)
+- [CI workflows](#ci-workflows)
 - [Tags and Versions](#tags-and-versions)
 - [Compose and Env files](#compose-and-env-files)
 - [Dockerfiles and Packages](#dockerfiles-and-packages)
@@ -30,6 +33,23 @@ They can be changed as necessary/desired (see following sections).
 - **Isis-Asp** image is defined in [`isisasp.dockerfile](/dockerfiles/isisasp.dockerfile).
   It installs [NASA' ASP toolkit](https://github.com/NeoGeographyToolkit/StereoPipeline).
 
+# CI workflows
+[DockerHub]: https://hub.docker.com
+
+Github actions are used to build and publish the images to [DockerHub][] when
+certain events occur -- eg, *push* or *tagging*.
+Naturally, an account in DockerHub is necessary if you want to use the workflows
+when you fork this repository.
+
+When you fork this repository, you just need to set a ~couple of
+variables/secrets related to DockerHub.
+Those variables indicate the *user* and its *token* secrets -- used to *push*
+the images to some repository of an *user-or-organization*.
+You'll set them in your repository's context and CI actions should run just fine.
+
+> See document [`workflows.md`](workflows.md)
+> for details on the building and publishing (gh) actions.
+
 
 ## Tags and Versions
 
@@ -42,6 +62,8 @@ will create corresponding (tagged) images and published in DockerHub automatical
 It is **recommended** for the tagging of this repository to use a date in the format
 `YYYYMMDD` (year-month-day) or some specific event for which some custom
 image is necessary (eg, `egu`).
+
+
 ## Compose and Env files
 
 Docker `compose.yml` file has the recipes to `build` each of the (3) images
@@ -70,6 +92,7 @@ The versions to install in the images are defined in compose's variables:
 For instance, when you do `docker compose build jupyter-isis`, the `ISIS_VERSION`
 defined in `.env` will be used. Likewise for ASP when you build `jupyter-isis-asp`.
 
+
 ### Image names
 
 The names of the images used as *base-image* arguments as well as the output
@@ -97,6 +120,10 @@ individually:
     docker compose build jupyter-isis-asp
     ```
 
-## Dockerfiles and Packages
+## Docker Recipes
 
-TBD
+In [dockerfiles/](/dockerfiles/) we see the three `.dockerfiles` for
+[`gispy`](/dockerfiles/gispy.dockerfile),
+[`isis`](/dockerfiles/isis.dockerfile),
+and [`isisasp`](/dockerfiles/isisasp.dockerfile).
+We also see `{gispy,isis,isisasp}.{yml,txt}` files

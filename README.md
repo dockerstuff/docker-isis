@@ -1,30 +1,35 @@
 # Docker-ISIS
 
-Docker container images for planetary data analysis. 
-This repository defines a docker container with USGS/ISIS toolkit pre-set.
-So planetary data provided by NASA's Planetary Data System (PDS) could/can be
-processed anywhere with Docker installed.
+Container images for geo-planetary data analysis.
 
-Around the ISIS image there is "Gispy" and "ISIS-ASP". The former is an
-image with GIS Python packages to provide a modern data analysis environment
-based on Jupyter Notebooks. Per default, Gispy is based on `jupyter/scipy-notebook`.
-The latter, ISIS-ASP, extends "ISIS" with Ames Stereo Pipeline.
-Finally, the ISIS image is an extention of Gispy, with the USGS/ISIS installed.
+This repository defines a Docker containers with USGS/ISIS and NASA/ASP toolkits
+ready for use, as well as a GIS environment based on Python and command-line
+tools for either Earth or planetary geo-spatial data processing.
+
+The goal is to remove the time-consuming and error-prone steps on setting up
+those data analysis/processing software. Besides optimizing the time spent on
+setup, a standard set of images provide reproducible scenario for more
+reliable results.
+
+All the (three) images extend on [Jupyter Docker Stacks images](https://jupyter-docker-stacks.readthedocs.io/),
+meaning they all provide a Jupyter Lab interface for high level access to Python and CLI.
 
 Images tree:
 
-    ---------     --------     ------------
-    | gispy | --> | isis | --> | isis-asp |
-    ---------     --------     ------------
+    ---------
+    | gispy |
+    ---------
+    --------     ------------
+    | isis | --> | isis-asp |
+    --------     ------------
 
-
-The "ISIS" container is defined in 
+The "ISIS" container is defined in
 [`dockerfiles/isis.dockerfile`](`dockerfiles/isis.dockerfile`),
 next to the other images (in [`dockerfiles/`](dockerfiles/)):
 
 - `gispy`: Jupyter-Lab for Python Geographical (GIS) data analysis
 - `isis`: Jupyter-Lab server with USGS/ISIS install (based in `gispy`)
-- `isis-asp`: Extension of `isis` with AMES Stereo Pipeline installed 
+- `isis-asp`: Extension of `isis` with AMES Stereo Pipeline installed
 
 The corresponding images can be downloaded from GMAP repository in DockerHub:
 
@@ -32,8 +37,8 @@ The corresponding images can be downloaded from GMAP repository in DockerHub:
 - `gmap/jupyter-isis`: latest build of `isis.dockerfile`
 - `gmap/jupyter-isis-asp`: latest build of `isis-asp.dockerfile`
 
-If you want to *build* your own images, check 
-the *readme* in `dockerfiles/`](dockerfiles/README.md).
+If you want to *build* your own images, check [`dockerfiles/`](dockerfiles/README.md).
+If you want to *run* them, check the nexts sections here below.
 
 Summary:
 
@@ -57,8 +62,8 @@ and how it works:
 
 ### ISIS-Data
 
-If using ISIS tools, you'll probably need "`ISISDATA`" (the space-planetary 
-missions and instruments support data). ISIS-Data is NOT included in the 
+If using ISIS tools, you'll probably need "`ISISDATA`" (the space-planetary
+missions and instruments support data). ISIS-Data is NOT included in the
 container(s).
 
 For instructions on obtaining ISIS-Data, see the official docs at:
@@ -108,18 +113,18 @@ docker pull gmap/jupyter-isis
 docker run --rm --port 8888:8888 gmap/jupyter-isis
 ```
 
-> The `--port` argument is necessary because the interface we are going to 
+> The `--port` argument is necessary because the interface we are going to
 > use -- Jupyter-Lab -- is accessible through our host's port `8888`.
 >
 > The other argument, `--rm` is responsible for automatic remove of of
-> the container when you finish using it. 
+> the container when you finish using it.
 
 
 ### Accessing Jupyter-Lab
 
 "Jupyter-ISIS" containter is running, and an instance of Jupyter-Lab
 should be available at [http://localhost:8888](http://localhost:8888).
-If you go there (in your browser), you should see a login page, where a 
+If you go there (in your browser), you should see a login page, where a
 passphrase (password, token) is requested.
 
 There are two ways you can authenticate and login into a Jupyter-Lab instance:
@@ -131,7 +136,7 @@ There are two ways you can authenticate and login into a Jupyter-Lab instance:
 #### Get *token* from terminal
 
 If you go straight to [http://localhost:8888](http://localhost:8888) you'll
-notice a *passphrase* or *token* is required. 
+notice a *passphrase* or *token* is required.
 Such information you find in the output from the latest command, `docker-run`,
 you should see something *like*:
 
@@ -170,7 +175,7 @@ You should then be redirected to a Jupyter-Lab workspace.
 
 Docker containers run in an isolated environment, meaning it is not possible
 to access the contents of the host system unless explicitly required.
-For example, if you want to access the content of directory `/data` from 
+For example, if you want to access the content of directory `/data` from
 inside the (jupyter-isis) container, you must "say" so when *instantiating*
 the container (*ie*, when `docker run`*ning*).
 
@@ -182,7 +187,7 @@ docker run  -v "/data:/mnt/data" \
             -p 8888:8888 gmap/jupyter-isis
 ```
 
-In the command above we *bound* host's `/data` directory to 
+In the command above we *bound* host's `/data` directory to
 container's `/mnt/data` directory through option `-v` (*volume*)
 
 You can mount as many volumes (*ie*, directories) as you want.
@@ -191,7 +196,7 @@ we are going to use raster and vector datasets from two diferent directories,
 '`/data/raster/mars`' and '`/data/vector/mars`'.
 
 We can share *both* directories with the container.
-In this case, we can bind `/data/{raster,vector}/mars` directories to 
+In this case, we can bind `/data/{raster,vector}/mars` directories to
 container's `/mnt/data/mars/{raster,vector}` paths:
 
 ```bash
@@ -229,7 +234,7 @@ Inside the container, you should see the content of ISISDATA inside
 
 * USGS ISIS v7.1.0
 * NASA AMES Stereo Pipeline (ASP) v3.2.0
-* jupyter-stack/scipy-notebook  
+* jupyter-stack/scipy-notebook
 * GISPY image containing several common used python package for processing planetary images and GIS data (e.g. rasterio, spectral, fiona, shapely) and various utilities (e.g. numpy, matoplotlib, pandas, scikit-image, etc)
 
 Then ISIS v7 can be used in jupyterlab terminal or jupyter noteboo through [kalasiris](https://github.com/rbeyer/kalasiris) package by adding in the first cell of the notebook the following code:
@@ -242,7 +247,7 @@ import kalasiris as isis
 For an example notebook see [PyISIS-Parallel](https://github.com/Hyradus/PyISIS-Parallel/tree/main/PyISIS-Parallel)
 
 _____________________
-*This work is supported the Europlanet 2024 RI and EXPLORE project, 
-it has received funding from the European Union’s Horizon 2020 
-Research and Innovation programme under grant agreement 
+*This work is supported the Europlanet 2024 RI and EXPLORE project,
+it has received funding from the European Union’s Horizon 2020
+Research and Innovation programme under grant agreement
 No 871149 and No 101004214.*
