@@ -4,7 +4,6 @@ Let's go through the structure of files and workflow on building and releasing
 of our (Docker) container images.
 
 
-
 - [The images](#the-images)
 - [CI workflows](#ci-workflows)
 - [Tags and Versions](#tags-and-versions)
@@ -126,4 +125,8 @@ In [dockerfiles/](/dockerfiles/) we see the three `.dockerfiles` for
 [`gispy`](/dockerfiles/gispy.dockerfile),
 [`isis`](/dockerfiles/isis.dockerfile),
 and [`isisasp`](/dockerfiles/isisasp.dockerfile).
-We also see `{gispy,isis,isisasp}.{yml,txt}` files
+We also see `{gispy,isis,isisasp}.{yml,txt}` files, those contain the
+Python packages to install in the respective images.
+
+The `.txt` files are (Pip) "requirements.txt" files, `.yml` files are
+(Conda) "environment.yml"

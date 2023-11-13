@@ -31,15 +31,15 @@ USER $NB_UID
 
 ARG ASP_VERSION=""
 
-COPY isisasp.txt /tmp/asp.tmp
+COPY isisasp.yml /tmp/asp.tmp
 
 RUN [ -n "${ASP_VERSION}" ]                                             && \
     sed "s/\(.*stereo-pipeline\).*/\1=$ASP_VERSION/" /tmp/asp.tmp       \
-        > /tmp/asp.txt                                                  || \
-    cp /tmp/asp.tmp /tmp/asp.txt
+        > /tmp/asp.yml                                                  || \
+    cp /tmp/asp.tmp /tmp/asp.yml
 
 RUN source activate isis                    && \
-    mamba install --file /tmp/asp.txt       && \
+    mamba install --file /tmp/asp.yml       && \
     conda clean -a
 
 ## Write a README file for user
