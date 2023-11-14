@@ -52,15 +52,11 @@ You'll set them in your repository's context and CI actions should run just fine
 
 ## Tags and Versions
 
-There is no real meaning in tagging this repository with some [semver](https://semver.org/)
-syntax (eg, `v2` or `v1.3.7`); it can, though. Any tagging of the repository
-will create corresponding (tagged) images and published in DockerHub automatically.
-
-> See document [workflows.md](workflows.md) for details on building/publishing.
-
 It is **recommended** for the tagging of this repository to use a date in the format
 `YYYYMMDD` (year-month-day) or some specific event for which some custom
 image is necessary (eg, `egu`).
+
+> See document [workflows.md](workflows.md) for details on building/publishing.
 
 
 ## Compose and Env files
