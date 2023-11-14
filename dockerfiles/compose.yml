@@ -21,8 +21,6 @@ services:
         ISISTESTDATA: ${ISISTESTDATA}
 
   jupyter-isis-asp:
-    depends_on:
-      - jupyter-isis
     image: ${ASP_IMAGE:-jupyter-isis-asp}
     build:
       context: .

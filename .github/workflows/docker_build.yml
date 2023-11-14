@@ -229,6 +229,7 @@ jobs:
         if: ${{ github.event_name == 'push' }}
         run: |
           NEW_IMAGE=`docker compose config --images ${{ env.SERVICE }}`
+          echo "$NEW_IMAGE"
           echo "docker tag $NEW_IMAGE ${{ env.REPO }}:$GITHUB_REF_NAME"
           docker tag $NEW_IMAGE ${{ env.REPO }}:$GITHUB_REF_NAME
 
