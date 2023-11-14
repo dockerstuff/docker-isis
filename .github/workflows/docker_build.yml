@@ -53,6 +53,9 @@ jobs:
 
   gispy:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./dockerfiles
     env:
       USER_ORG: ${{ vars.DOCKERHUB_NAMESPACE }}
       SERVICE: jupyter-gispy
@@ -65,20 +68,17 @@ jobs:
 
       - name: Build image
         run: |
-          cd dockerfiles/
           docker compose build ${{ env.SERVICE }}
 
       - name: Tag image
         if: ${{ github.event_name == 'push' }}
         run: |
-          cd dockerfiles/
           NEW_IMAGE=`docker compose config --images ${{ env.SERVICE }}`
           docker tag $NEW_IMAGE ${{ env.REPO }}:$GITHUB_REF_NAME
 
       - name: Tag 'latest' image
         if: ${{ github.ref_type == 'tag' }}
         run: |
-          cd dockerfiles/
           NEW_IMAGE=`docker compose config --images ${{ env.SERVICE }}`
           docker tag $NEW_IMAGE ${{ env.REPO }}:latest
         # DATE=`date +%Y%m%d`
@@ -107,6 +107,9 @@ jobs:
 
   isis:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./dockerfiles
     env:
       USER_ORG: ${{ vars.DOCKERHUB_NAMESPACE }}
       SERVICE: jupyter-isis
@@ -122,20 +125,17 @@ jobs:
 
       - name: Build image
         run: |
-          cd dockerfiles/
           docker compose build ${{ env.SERVICE }}
 
       - name: Tag image
         if: ${{ github.event_name == 'push' }}
         run: |
-          cd dockerfiles/
           NEW_IMAGE=`docker compose config --images ${{ env.SERVICE }}`
           docker tag $NEW_IMAGE ${{ env.REPO }}:$GITHUB_REF_NAME
 
       - name: Tag 'latest' image
         if: ${{ github.ref_type == 'tag' }}
         run: |
-          cd dockerfiles/
           NEW_IMAGE=`docker compose config --images ${{ env.SERVICE }}`
           docker tag $NEW_IMAGE ${{ env.REPO }}:latest
           docker tag $NEW_IMAGE ${{ env.REPO }}:${ISIS_VERSION}
@@ -182,6 +182,9 @@ jobs:
   isis-asp:
     needs: isis
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./dockerfiles
     env:
       USER_ORG: ${{ vars.DOCKERHUB_NAMESPACE }}
       SERVICE: jupyter-isis-asp
@@ -209,20 +212,17 @@ jobs:
       - name: Build image
         run: |
           ISIS_IMAGE=${{ env.USER_ORG }}/jupyter-isis:${GITHUB_REF_NAME}
-          cd dockerfiles/
           docker compose build --build-arg BASE_IMAGE=${ISIS_IMAGE} ${{ env.SERVICE }}
 
       - name: Tag image
         if: ${{ github.event_name == 'push' }}
         run: |
-          cd dockerfiles/
           NEW_IMAGE=`docker compose config --images ${{ env.SERVICE }}`
           docker tag $NEW_IMAGE ${{ env.REPO }}:$GITHUB_REF_NAME
 
       - name: Tag 'latest' image
         if: ${{ github.ref_type == 'tag' }}
         run: |
-          cd dockerfiles/
           NEW_IMAGE=`docker compose config --images ${{ env.SERVICE }}`
           docker tag $NEW_IMAGE ${{ env.REPO }}:latest
           docker tag $NEW_IMAGE ${{ env.REPO }}:${ISIS_VERSION}-${ASP_VERSION}
