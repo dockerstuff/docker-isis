@@ -20,3 +20,21 @@ You'll notice that `isis` and `stereo-pipeline` have no version defined in
 versions will be taken from the [`.env`](/.env).
 *There* is where you should change/fix the versions of ISIS and ASP you
 want to use.
+
+
+## Build
+
+A *docker-compose* file ([`build.compose.yml`](build.compose.yml))
+is provided to ease the building of the images.
+
+For building the `jupyter-isis` image, you can simply check/adjust the
+variables (eg, `ISIS_VERSION`) in file [`build.env`](build.env) and then
+run the building through docker-compose:
+
+```bash
+docker compose --env-file build.env build jupyter-isis
+```
+
+> The documentation for [developers](/docs/developers.md) and
+> [deployment](/docs/deployment.md) provide more information
+> about *building* and *running* these images.

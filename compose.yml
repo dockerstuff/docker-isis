@@ -1,38 +1,26 @@
-version: "3.8"
 services:
 
   jupyter-gispy:
-    build:
-      context: dockerfiles/.
-      dockerfile: gispy.dockerfile
-      args:
-        BASE_IMAGE: ${GISPY_BASE_IMAGE:-jupyter/scipy-notebook}
-    image: ${GISPY_IMAGE:-jupyter-gispy}
+    image: gmap/jupyter-gispy}
     # environment:
-    #   - JUPYTER_TOKEN=''
+    #   - JUPYTER_TOKEN='pass'
     ports:
       - "8888:8888"
+    volumes:
+      - ${PWD}:/home/jovyan/work
 
   jupyter-isis:
-    build:
-      context: dockerfiles/.
-      dockerfile: isis.dockerfile
-      args:
-        BASE_IMAGE: ${ISIS_BASE_IMAGE:-jupyter/minimal-notebook}
-        ISIS_VERSION: ${ISIS_VERSION:-7.1.0}
-        ISISDATA: ${ISISDATA:-/isis/data}
-        ISISTESTDATA: ${ISISTESTDATA:-/isis/testdata}
-    image: ${ISIS_IMAGE:-jupyter-isis}
+    image: gmap/jupyter-isis}
     ports:
       - 8888:8888
+    volumes:
+      - ${PWD}:/home/jovyan/work
+      - ${ISIS_DATA}:/isis/data
 
   jupyter-isis-asp:
-    build:
-      context: dockerfiles/.
-      dockerfile: isisasp.dockerfile
-      args:
-        BASE_IMAGE: ${ISIS_IMAGE:-jupyter-isis}
-        ASP_VERSION: ${ASP_VERSION:-3.2.0}
-    image: ${ASP_IMAGE:-jupyter-isis-asp}
+    image: gmap/jupyter-isis-asp}
     ports:
       - 8888:8888
+    volumes:
+      - ${PWD}:/home/jovyan/work
+      - ${ISIS_DATA}:/isis/data

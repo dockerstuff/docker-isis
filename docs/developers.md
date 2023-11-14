@@ -102,17 +102,17 @@ individually:
 
 - Build "gispy":
     ```bash
-    docker compose build jupyter-gispy
+    docker compose --env-file build.env build jupyter-gispy
     ```
 
 - Build "isis":
     ```bash
-    docker compose build jupyter-isis
+    docker compose --env-file build.env build jupyter-isis
     ```
 
 - Build "isis-asp":
     ```bash
-    docker compose build jupyter-isis-asp
+    docker compose --env-file build.env build jupyter-isis-asp
     ```
 
 ## Docker Recipes

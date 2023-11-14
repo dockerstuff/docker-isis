@@ -17,7 +17,7 @@ The [`docker_build.yml`](/.github/workflows/docker_build.yml) workflow
 needs two secrets and one variable defined in the scope of the repository:
 
 - variable:
-    - `DOCKERHUB_USERNAME`: name of the user *or* organization namespace
+    - `DOCKERHUB_NAMESPACE`: name of the user *or* organization namespace
       the images will be published in DockerHub (eg, `gmap`)
 - secrets:
     - `DOCKERHUB_USERNAME`: name of the user authoring/pushing the images
