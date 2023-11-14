@@ -224,7 +224,6 @@ jobs:
           ISIS_IMAGE=${{ env.USER_ORG }}/jupyter-isis:${GITHUB_REF_NAME}
           echo "docker compose build --build-arg BASE_IMAGE=${ISIS_IMAGE} ${{ env.SERVICE }}"
           docker compose build --build-arg BASE_IMAGE=${ISIS_IMAGE} ${{ env.SERVICE }}
-          docker rmi $ISIS_IMAGE
 
       - name: Tag image
         if: ${{ github.event_name == 'push' }}
