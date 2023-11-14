@@ -18,11 +18,11 @@ name: Build and Publish Containers
 on:
   # Runs when pushing to 'stable' branch
   push:
-    # branches:
+    branches:
+      - 'test'
     #   - 'stable'
-    #   - 'test'
-    branches-ignore:
-      - 'master'
+    # branches-ignore:
+    #   - 'master'
     tags:
       - '*'
 
@@ -54,7 +54,7 @@ jobs:
   gispy:
     runs-on: ubuntu-latest
     env:
-      USER_ORG: ${{ vars.DOCKERHUB_USERNAME }}
+      USER_ORG: ${{ vars.DOCKERHUB_NAMESPACE }}
       SERVICE: jupyter-gispy
       REPO: ${USER_ORG}/${SERVICE}
 
@@ -105,7 +105,7 @@ jobs:
   isis:
     runs-on: ubuntu-latest
     env:
-      USER_ORG: ${{ vars.DOCKERHUB_USERNAME }}
+      USER_ORG: ${{ vars.DOCKERHUB_NAMESPACE }}
       SERVICE: jupyter-isis
       REPO: ${USER_ORG}/${SERVICE}
 
@@ -176,7 +176,7 @@ jobs:
     needs: isis
     runs-on: ubuntu-latest
     env:
-      USER_ORG: ${{ vars.DOCKERHUB_USERNAME }}
+      USER_ORG: ${{ vars.DOCKERHUB_NAMESPACE }}
       SERVICE: jupyter-isis-asp
       REPO: ${USER_ORG}/${SERVICE}
 

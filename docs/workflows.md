@@ -5,8 +5,7 @@ publishing (on DockerHub) of all three images.
 
 Because we don't want to build/publish images everytime some minor, irrelevant
 change happens to the repository (eg, edit README.md), building will happen
-only when the repository is *tagged* or a branch *other than `master`* is
-modified.
+only when the repository is *tagged* or when branch `test` receives a push.
 
 - [Variables and Secrets](#variables-and-secrets)
 - [Branches and Tags](#branches-and-tags)

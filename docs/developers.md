@@ -52,8 +52,8 @@ You'll set them in your repository's context and CI actions should run just fine
 
 ## Tags and Versions
 
-It is **recommended** for the tagging of this repository to use a date in the format
-`YYYYMMDD` (year-month-day) or some specific event for which some custom
+It is **recommended** for the tagging of this repository to use a date in the
+format `YYYYMMDD` (year-month-day) or some specific event for which some custom
 image is necessary (eg, `egu`).
 
 > See document [workflows.md](workflows.md) for details on building/publishing.
