@@ -121,7 +121,9 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Load .env file
-        uses: xom9ikk/dotenv@v2
+        run: |
+          source .env
+          echo "ISIS_VERSION=${ISIS_VERSION}" >> $GITHUB_ENV
 
       - name: Build image
         run: |
@@ -131,14 +133,15 @@ jobs:
         if: ${{ github.event_name == 'push' }}
         run: |
           NEW_IMAGE=`docker compose config --images ${{ env.SERVICE }}`
+          echo "docker tag $NEW_IMAGE ${{ env.REPO }}:$GITHUB_REF_NAME"
           docker tag $NEW_IMAGE ${{ env.REPO }}:$GITHUB_REF_NAME
 
       - name: Tag 'latest' image
         if: ${{ github.ref_type == 'tag' }}
         run: |
           NEW_IMAGE=`docker compose config --images ${{ env.SERVICE }}`
-          docker tag $NEW_IMAGE ${{ env.REPO }}:latest
           docker tag $NEW_IMAGE ${{ env.REPO }}:${ISIS_VERSION}
+          docker tag $NEW_IMAGE ${{ env.REPO }}:latest
         # DATE=`date +%Y%m%d`
         # docker tag $NEW_IMAGE ${{ env.REPO }}:$DATE
 
@@ -207,17 +210,27 @@ jobs:
       #     docker image ls -a
 
       - name: Load .env file
-        uses: xom9ikk/dotenv@v2
+        run: |
+          source .env
+          echo "ISIS_VERSION=${ISIS_VERSION}" >> $GITHUB_ENV
+          echo "ASP_VERSION=${ASP_VERSION}" >> $GITHUB_ENV
+
+      - name: List images
+        run: |
+          docker image ls -a
 
       - name: Build image
         run: |
           ISIS_IMAGE=${{ env.USER_ORG }}/jupyter-isis:${GITHUB_REF_NAME}
+          echo "docker compose build --build-arg BASE_IMAGE=${ISIS_IMAGE} ${{ env.SERVICE }}"
           docker compose build --build-arg BASE_IMAGE=${ISIS_IMAGE} ${{ env.SERVICE }}
+          docker rmi $ISIS_IMAGE
 
       - name: Tag image
         if: ${{ github.event_name == 'push' }}
         run: |
           NEW_IMAGE=`docker compose config --images ${{ env.SERVICE }}`
+          echo "docker tag $NEW_IMAGE ${{ env.REPO }}:$GITHUB_REF_NAME"
           docker tag $NEW_IMAGE ${{ env.REPO }}:$GITHUB_REF_NAME
 
       - name: Tag 'latest' image
@@ -248,3 +261,7 @@ jobs:
           | tail -n+2 | awk '{print $1":"$2}'
           | grep "${{ env.REPO }}"
           | xargs -I'{}' docker push {}
+
+      - name: List images
+        run: |
+          docker image ls -a

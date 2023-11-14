@@ -1,7 +1,7 @@
 services:
 
   jupyter-gispy:
-    image: gmap/jupyter-gispy}
+    image: gmap/jupyter-gispy:latest
     # environment:
     #   - JUPYTER_TOKEN='pass'
     ports:
@@ -10,7 +10,7 @@ services:
       - ${PWD}:/home/jovyan/work
 
   jupyter-isis:
-    image: gmap/jupyter-isis}
+    image: gmap/jupyter-isis:latest
     ports:
       - 8888:8888
     volumes:
@@ -18,7 +18,7 @@ services:
       - ${ISIS_DATA}:/isis/data
 
   jupyter-isis-asp:
-    image: gmap/jupyter-isis-asp}
+    image: gmap/jupyter-isis-asp:latest
     ports:
       - 8888:8888
     volumes:
