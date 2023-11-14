@@ -65,17 +65,20 @@ jobs:
 
       - name: Build image
         run: |
+          cd dockerfiles/
           docker compose build ${{ env.SERVICE }}
 
       - name: Tag image
         if: ${{ github.event_name == 'push' }}
         run: |
+          cd dockerfiles/
           NEW_IMAGE=`docker compose config --images ${{ env.SERVICE }}`
           docker tag $NEW_IMAGE ${{ env.REPO }}:$GITHUB_REF_NAME
 
       - name: Tag 'latest' image
         if: ${{ github.ref_type == 'tag' }}
         run: |
+          cd dockerfiles/
           NEW_IMAGE=`docker compose config --images ${{ env.SERVICE }}`
           docker tag $NEW_IMAGE ${{ env.REPO }}:latest
         # DATE=`date +%Y%m%d`
@@ -119,17 +122,20 @@ jobs:
 
       - name: Build image
         run: |
+          cd dockerfiles/
           docker compose build ${{ env.SERVICE }}
 
       - name: Tag image
         if: ${{ github.event_name == 'push' }}
         run: |
+          cd dockerfiles/
           NEW_IMAGE=`docker compose config --images ${{ env.SERVICE }}`
           docker tag $NEW_IMAGE ${{ env.REPO }}:$GITHUB_REF_NAME
 
       - name: Tag 'latest' image
         if: ${{ github.ref_type == 'tag' }}
         run: |
+          cd dockerfiles/
           NEW_IMAGE=`docker compose config --images ${{ env.SERVICE }}`
           docker tag $NEW_IMAGE ${{ env.REPO }}:latest
           docker tag $NEW_IMAGE ${{ env.REPO }}:${ISIS_VERSION}
@@ -158,6 +164,7 @@ jobs:
 
       - name: Save image
         run: |
+          cd dockerfiles/
           NEW_IMAGE=`docker compose config --images ${{ env.SERVICE }}`
           docker save --output /tmp/image.tar $NEW_IMAGE
 
@@ -200,17 +207,20 @@ jobs:
 
       - name: Build image
         run: |
+          cd dockerfiles/
           docker compose build ${{ env.SERVICE }}
 
       - name: Tag image
         if: ${{ github.event_name == 'push' }}
         run: |
+          cd dockerfiles/
           NEW_IMAGE=`docker compose config --images ${{ env.SERVICE }}`
           docker tag $NEW_IMAGE ${{ env.REPO }}:$GITHUB_REF_NAME
 
       - name: Tag 'latest' image
         if: ${{ github.ref_type == 'tag' }}
         run: |
+          cd dockerfiles/
           NEW_IMAGE=`docker compose config --images ${{ env.SERVICE }}`
           docker tag $NEW_IMAGE ${{ env.REPO }}:latest
           docker tag $NEW_IMAGE ${{ env.REPO }}:${ISIS_VERSION}-${ASP_VERSION}
