@@ -24,15 +24,15 @@ want to use.
 
 ## Build
 
-A *docker-compose* file ([`build.compose.yml`](build.compose.yml))
+A *docker-compose* file ([`compose.yml`](compose.yml))
 is provided to ease the building of the images.
 
 For building the `jupyter-isis` image, you can simply check/adjust the
-variables (eg, `ISIS_VERSION`) in file [`build.env`](build.env) and then
+variables (eg, `ISIS_VERSION`) in file [`.env`](.env) and then
 run the building through docker-compose:
 
 ```bash
-docker compose --env-file build.env build jupyter-isis
+docker compose build jupyter-isis
 ```
 
 > The documentation for [developers](/docs/developers.md) and
