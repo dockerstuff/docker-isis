@@ -34,13 +34,13 @@ ARG ASP_VERSION=""
 COPY isisasp.yml /tmp/asp.tmp
 
 RUN [ -n "${ASP_VERSION}" ]                                             && \
-    sed "s/\(.*stereo-pipeline\).*/\1=$ASP_VERSION/" /tmp/asp.tmp       \
+    sed "s/\(.*- stereo-pipeline\).*/\1=$ASP_VERSION/" /tmp/asp.tmp     \
         > /tmp/asp.yml                                                  || \
     cp /tmp/asp.tmp /tmp/asp.yml
 
 RUN source activate isis                    && \
-    mamba install --file /tmp/asp.yml       && \
-    conda clean -a
+    mamba env update --file /tmp/asp.yml    && \
+    mamba clean -a
 
 ## Write a README file for user
 #
