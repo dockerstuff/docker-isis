@@ -41,7 +41,7 @@ Images tree:
 If you want to *build* your own images,
 go to [`dockerfiles/README.md`](dockerfiles/README.md).
 
-## TLDR
+## How to use it
 
 Since these images are based on [Jupyter images][], running them works
 exactly the same:
@@ -57,7 +57,7 @@ docker run -it -p 8888:8888 -e JUPYTER_TOKEN=pass gmap/jupyter-isis
 > token value from the (Jupyter) service log from `docker run` command.
 
 Since most of ISIS tools demand the use of ISIS-Data, you need to provide it
-by *sharing* a local directory with *ISISDATA*.
+by *sharing* a local directory with *ISISDATA* (see [ISIS-Data](#ISIS-Data) below).
 
 Per default, the container images (ie, `jupyter-isis`, `jupyter-isis-asp`) define the
 `ISISDATA` variable to:
