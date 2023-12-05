@@ -1,7 +1,7 @@
 # Docker-ISIS
-
+![build badge](https://github.com/europlanet-gmap/docker-isis/actions/workflows/docker_build.yml/badge.svg)
+-----
 [Jupyter images]: https://jupyter-docker-stacks.readthedocs.io
-
 Container images for geo-planetary data analysis.
 
 This repository defines a Docker containers with USGS/ISIS and NASA/ASP toolkits
