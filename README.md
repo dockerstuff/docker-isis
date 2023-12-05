@@ -57,21 +57,21 @@ docker run -it -p 8888:8888 -e JUPYTER_TOKEN=pass gmap/jupyter-isis
 > token value from the (Jupyter) service log from `docker run` command.
 
 Since most of ISIS tools demand the use of ISIS-Data, you need to provide it
-by *sharing* a local directory containing a copy of *ISISDATA*.
-This is done with options `-v`:
+by *sharing* a local directory with *ISISDATA*.
+
+Per default, the container images (ie, `jupyter-isis`, `jupyter-isis-asp`) define the
+`ISISDATA` variable to:
+
+> **`ISISDATA=/mnt/isis/data`**
+
+Analogously, `ISISTESTDATA` (in case you use) is defined to `/mnt/isis/testdata`.
+
+You will then *bind* your local directory to that of *ISISDATA* inside the image though *docker-run* `-v` option:
 
 ```bash
-ISISDATA="/path/to/my/isisdata"
-docker run -it -p 8888:8888 -v $ISISDATA:/isis/data gmap/jupyter_isis
+MY_ISIS_DATA="/path/to/my/isis/data/in/your/system"
+docker run -it -p 8888:8888 -v $MY_ISIS_DATA:/isis/data gmap/jupyter-isis
 ```
-
-> Notice the value where your `$ISISDATA` directory is being mounted to
-> inside the container:
->
-> - **`/isis/data`**
->
-> This is where the user environment inside the container is expecting
-> to find ISIS' Data.
 
 You can share as many directories as you want (between your computer and
 the container) through (multiple) `-v` arguments.
@@ -83,7 +83,7 @@ you can share them with the container like so:
 docker run -it -p 8888:8888 \
     -v /path/to/raster:/home/jovyan/raster \
     -v /path/to/vector:/home/jovyan/vector \
-    gmap/jupyter_gispy
+    gmap/jupyter-gispy
 ```
 
 The "raster" and "vector" (local) directories will be mounted in container's
